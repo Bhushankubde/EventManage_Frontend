@@ -4,7 +4,7 @@ import { ShoppingCart } from 'lucide-react';
 
 export const Navbar = () => {
   return (
-    <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-8 py-4 bg-black/60 z-40">
+    <div className="fixed top-0 left-0 right-0 flex items-center justify-between px-8 py-4 bg-black/60 backdrop-blur-md border-b border-white/10 z-50">
       <Link to="/">
         <img src="/images/logo.png" alt="EventDeco Logo" className="h-24 w-auto object-contain" />
       </Link>

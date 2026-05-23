@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { LoadingSpinner } from './components/LoadingSpinner';
@@ -18,13 +18,15 @@ const CartPage = lazy(() => import('./pages/CartPage'));
 const Layout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const { logout, isAuthenticated } = useAuth();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
       <Navbar />
 
 
-      <main className="flex-1 relative z-0">
+      <main className={`flex-1 relative z-0 ${!isHomePage ? 'pt-32' : ''}`}>
         <Suspense fallback={<LoadingSpinner />}>
           {children}
         </Suspense>
