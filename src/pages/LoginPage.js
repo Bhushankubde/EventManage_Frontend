@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Lock, Mail, User as UserIcon, Phone } from 'lucide-react';
+import { Lock, Mail } from 'lucide-react';
 
-const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const { login, register } = useAuth();
+const LoginPage = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,9 +12,6 @@ const AuthPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    firstName: '',
-    lastName: '',
-    phone: ''
   });
 
   const handleChange = (e) => {
@@ -27,12 +23,7 @@ const AuthPage = () => {
     setLoading(true);
     setError('');
 
-    let result;
-    if (isLogin) {
-      result = await login(formData.email, formData.password);
-    } else {
-      result = await register(formData);
-    }
+    const result = await login(formData.email, formData.password);
 
     setLoading(false);
 
@@ -51,16 +42,13 @@ const AuthPage = () => {
             E
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
-            {isLogin ? 'Sign in to your account' : 'Create new account'}
+            Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-muted-foreground">
             Or{' '}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="font-medium text-primary hover:underline"
-            >
-              {isLogin ? 'register for a new account' : 'sign in to your existing account'}
-            </button>
+            <Link to="/signup" className="font-medium text-primary hover:underline">
+              register for a new account
+            </Link>
           </p>
         </div>
 
@@ -72,49 +60,6 @@ const AuthPage = () => {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
-            {!isLogin && (
-              <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="relative">
-                    <UserIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                    <input
-                      name="firstName"
-                      type="text"
-                      required
-                      className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-border placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm bg-input-background"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="relative">
-                    <UserIcon className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                    <input
-                      name="lastName"
-                      type="text"
-                      required
-                      className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-border placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm bg-input-background"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                  <input
-                    name="phone"
-                    type="tel"
-                    required
-                    className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-border placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm bg-input-background"
-                    placeholder="Phone Number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                  />
-                </div>
-              </>
-            )}
-            
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
               <input
@@ -134,7 +79,7 @@ const AuthPage = () => {
               <input
                 name="password"
                 type="password"
-                autoComplete={isLogin ? "current-password" : "new-password"}
+                autoComplete="current-password"
                 required
                 className="appearance-none rounded-lg relative block w-full px-10 py-3 border border-border placeholder-muted-foreground text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent sm:text-sm bg-input-background"
                 placeholder="Password"
@@ -153,7 +98,7 @@ const AuthPage = () => {
               {loading ? (
                 <span className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"></span>
               ) : null}
-              {isLogin ? 'Sign in' : 'Register'}
+              Sign in
             </button>
           </div>
         </form>
@@ -162,4 +107,4 @@ const AuthPage = () => {
   );
 };
 
-export default AuthPage;
+export default LoginPage;

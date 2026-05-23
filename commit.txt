@@ -1,0 +1,9 @@
+feat: split auth pages and implement route protection
+
+- Separated unified AuthPage.js into dedicated LoginPage.js and SignupPage.js.
+- Updated App.js to replace /auth route with /login and /signup.
+- Updated Navbar.js to dynamically show Login/Sign Up buttons based on authentication state.
+- Created ProtectedRoute component to guard private routes.
+- Applied ProtectedRoute to AdminDashboard, OfflineSalesPage, CheckoutPage, CartPage, and BookingsPage in App.js.
+- Enforced role-based access for Admin and Offline Sales routes.
+- Removed obsolete AuthPage.js.

@@ -4,11 +4,13 @@ import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 // Lazy load pages for performance optimization
 const HomePage = lazy(() => import('./pages/HomePage'));
 const CatalogPage = lazy(() => import('./pages/CatalogPage'));
-const AuthPage = lazy(() => import('./pages/AuthPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const SignupPage = lazy(() => import('./pages/SignupPage'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const OfflineSalesPage = lazy(() => import('./pages/OfflineSalesPage'));
@@ -79,12 +81,13 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/catalog" element={<CatalogPage />} />
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/checkout" element={<CheckoutPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/offline-sales" element={<OfflineSalesPage />} />
-        <Route path="/bookings" element={<BookingsPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+        <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/offline-sales" element={<ProtectedRoute requireAdmin={true}><OfflineSalesPage /></ProtectedRoute>} />
+        <Route path="/bookings" element={<ProtectedRoute><BookingsPage /></ProtectedRoute>} />
         <Route path="*" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">404 - Page Not Found</h1></div>} />
       </Routes>
     </Layout>
