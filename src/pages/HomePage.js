@@ -1,43 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Clock, Lightbulb, Layers, Armchair, Sparkles, ArrowRight, ShoppingCart, User, Phone, Mail } from 'lucide-react';
+import { CatalogSection } from '../components/CatalogSection';
+
 
 const HomePage = () => {
-  const categories = [
-    {
-      id: 'lighting',
-      name: 'Lighting & FX',
-      description: 'Professional stage lights, glowing ambient uplighting, and string fairy lights.',
-      icon: Lightbulb,
-      colorClass: 'from-blue-500/10 to-amber-500/10 border-blue-500/20 hover:border-amber-400/50 text-amber-400',
-      iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    },
-    {
-      id: 'staging',
-      name: 'Staging & Truss',
-      description: 'Heavy-duty platforms, structural trusses, and secure rigging systems.',
-      icon: Layers,
-      colorClass: 'from-indigo-500/10 to-blue-500/10 border-indigo-500/20 hover:border-blue-400/50 text-blue-400',
-      iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    },
-    {
-      id: 'seating',
-      name: 'Seating & Tables',
-      description: 'Elegant banquet seating, modern bar stools, and polished reception tables.',
-      icon: Armchair,
-      colorClass: 'from-purple-500/10 to-pink-500/10 border-purple-500/20 hover:border-pink-400/50 text-pink-400',
-      iconBg: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-    },
-    {
-      id: 'decor',
-      name: 'Decor & Props',
-      description: 'Themed backdrop frames, luxury floral arches, and stunning centerpieces.',
-      icon: Sparkles,
-      colorClass: 'from-emerald-500/10 to-teal-500/10 border-emerald-500/20 hover:border-teal-400/50 text-teal-400',
-      iconBg: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
-    },
-  ];
-
   return (
     <div className="w-full flex flex-col min-h-screen pb-20 bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white">
       {/* Hero Section */}
@@ -101,41 +68,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="max-w-7xl mx-auto py-24 px-4 w-full relative z-10 bg-gradient-to-b from-[#0a0c1f] via-[#151726] to-[#090b16]">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-amber-400 text-sm font-bold uppercase tracking-widest bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">Our Catalog</span>
-          <h2 className="text-4xl font-extrabold text-white mt-4 mb-4 tracking-tight">Browse by Category</h2>
-          <p className="text-slate-400 text-lg">Select a category to view our premium inventory and book high-quality equipment for your next event.</p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((cat) => {
-            const IconComponent = cat.icon;
-            return (
-              <Link
-                key={cat.id}
-                to={`/catalog?category=${cat.id}`}
-
-              >
-                <div className={`w-12 h-12 rounded-lg ${cat.iconBg} border flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                  <IconComponent className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors flex items-center gap-1.5">
-                  {cat.name}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                  {cat.description}
-                </p>
-                <div className="flex items-center gap-1 text-sm font-bold text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span>Explore Items</span>
-                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
+      <CatalogSection />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { LoadingSpinner } from './components/LoadingSpinner';
+import { Navbar } from './components/Navbar';
 
 // Lazy load pages for performance optimization
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -20,15 +21,8 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
-      <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-2 bg-black/60 z-40">
-        <img src="/images/logo.png" alt="EventDeco Logo" className="h-16 w-auto object-contain" />
-        <div className="flex items-center space-x-2">
-          <Link to="/catalog" className="text-white hover:text-amber-400 text-sm font-medium">Browse Items</Link>
-          <Link to="/admin" className="flex items-center text-white hover:text-amber-400 text-sm font-medium">Admin</Link>
-          <Link to="/offline-sales" className="text-white hover:text-amber-400 text-sm font-medium">Offline Sales</Link>
-          <Link to="/cart" className="flex items-center text-white hover:text-amber-400 text-sm font-medium"><ShoppingCart className="w-5 h-5" /></Link>
-        </div>
-      </div>
+      <Navbar />
+
 
       <main className="flex-1 relative z-0">
         <Suspense fallback={<LoadingSpinner />}>
