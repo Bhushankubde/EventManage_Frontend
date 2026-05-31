@@ -14,6 +14,7 @@ const CatalogPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState(categoryParam);
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,8 +23,24 @@ const CatalogPage = () => {
   }, [categoryParam]);
 
   useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     fetchItems();
   }, [category, searchTerm]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await api.getCategories();
+      // Only show active categories
+      const active = (Array.isArray(data) ? data : []).filter(c => c.active !== false);
+      setCategories(active);
+    } catch (err) {
+      // Silent fail — filter will just show no dynamic options
+      setCategories([]);
+    }
+  };
 
   const fetchItems = async () => {
     try {
@@ -42,6 +59,10 @@ const CatalogPage = () => {
       setLoading(false);
     }
   };
+
+  const displayItems = items.filter(
+    item => item.available !== false && item.available !== 0 && item.available !== 'false' && item.available !== '0'
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
@@ -105,10 +126,13 @@ const CatalogPage = () => {
                   }}
                 >
                   <option value="all">All Categories</option>
-                  <option value="staging">Staging & Truss</option>
-                  <option value="lighting">Lighting</option>
-                  <option value="seating">Seating & Tables</option>
-                  <option value="decor">Decor & Props</option>
+                  {categories
+                    .slice()
+                    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+                    .map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
@@ -126,7 +150,7 @@ const CatalogPage = () => {
         <div className="flex-1">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Equipment Catalog</h1>
-            <span className="text-sm text-muted-foreground">{items.length} items</span>
+            <span className="text-sm text-muted-foreground">{displayItems.length} items</span>
           </div>
  
           {loading ? (
@@ -138,7 +162,7 @@ const CatalogPage = () => {
               <AlertTriangle className="w-5 h-5" />
               <p>{error}</p>
             </div>
-          ) : items.length === 0 ? (
+          ) : displayItems.length === 0 ? (
             <div className="text-center py-20 glass-panel rounded-xl">
               <Info className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-bold">No items found</h3>
@@ -157,7 +181,7 @@ const CatalogPage = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map(item => (
+              {displayItems.map(item => (
                 <div key={item.id} className="group glass-panel rounded-xl overflow-hidden flex flex-col hover:border-primary/30 transition-colors">
                   <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden">
                     <LazyLoadImage 

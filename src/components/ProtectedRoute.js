@@ -11,8 +11,9 @@ export const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (requireAdmin && user?.role !== 'ADMIN' && user?.role !== 'ROLE_ADMIN') {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" state={{ from: location, error: 'Admin access required. Please log in with an admin account.' }} replace />;
   }
+
 
   return children;
 };
