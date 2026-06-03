@@ -7,9 +7,9 @@ export const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const path = location.pathname;
-  const attemptedPath = location.state?.from?.pathname;
+  const attemptedPath = location.state?.from?.pathname;  //just a comment
   const isAuthPage = path === '/login' || path === '/signup';
-  
+
   return (
     <div className="fixed top-4 left-4 right-4 max-w-[1600px] mx-auto flex items-center justify-between px-6 py-2 bg-black/60 backdrop-blur-md border border-white/10 rounded-2xl z-50 shadow-2xl">
       <Link to="/">
@@ -19,11 +19,11 @@ export const Navbar = () => {
         {path !== '/catalog' && attemptedPath !== '/catalog' && (
           <Link to="/catalog" className="text-white hover:text-amber-400 text-lg font-medium transition-colors">Browse Items</Link>
         )}
-        
+
         {path !== '/admin' && attemptedPath !== '/admin' && (
           <Link to="/admin" className="flex items-center text-white hover:text-amber-400 text-lg font-medium transition-colors">Admin</Link>
         )}
-        
+
         {path !== '/offline-sales' && attemptedPath !== '/offline-sales' && (
           <Link to="/offline-sales" className="text-white hover:text-amber-400 text-lg font-medium transition-colors">Offline Sales</Link>
         )}
@@ -34,7 +34,7 @@ export const Navbar = () => {
             <span className="hidden sm:inline">Cart</span>
           </Link>
         )}
-        
+
         {!isAuthenticated ? (
           !isAuthPage && (
             <>
