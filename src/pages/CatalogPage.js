@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, ShoppingCart, Info, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Search, Filter, ShoppingCart, Info, TrendingUp, AlertTriangle, Lightbulb, Layers, Armchair, Sparkles, Volume2, Music, Utensils, Camera, LayoutGrid } from 'lucide-react';
 import { api } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+
+// Helper to get category icons dynamically based on name
+const getCategoryIcon = (name) => {
+  const n = name.toLowerCase();
+  if (n.includes('light')) return Lightbulb;
+  if (n.includes('stage') || n.includes('truss')) return Layers;
+  if (n.includes('seat') || n.includes('chair') || n.includes('table') || n.includes('sofa')) return Armchair;
+  if (n.includes('decor') || n.includes('prop') || n.includes('flower') || n.includes('fx')) return Sparkles;
+  if (n.includes('sound') || n.includes('audio') || n.includes('speaker')) return Volume2;
+  if (n.includes('dj') || n.includes('music')) return Music;
+  if (n.includes('cater') || n.includes('food') || n.includes('utensil')) return Utensils;
+  if (n.includes('camera') || n.includes('photo') || n.includes('video')) return Camera;
+  return Sparkles; // Default
+};
 
 const CatalogPage = () => {
   const { addToCart } = useCart();
@@ -67,22 +81,90 @@ const CatalogPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
       
-      {/* Top Embedded Ad Banner */}
-      <div className="mb-8 rounded-xl bg-gradient-to-r from-muted to-accent border border-border p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
-        <div className="flex items-start md:items-center gap-4 relative z-10">
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="text-blue-600 w-6 h-6" />
-          </div>
+      {/* Premium Horizontal Categories Carousel */}
+      <div className="mb-10 animate-in fade-in duration-700">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Promoted</span>
-            <h3 className="text-lg font-bold text-foreground">Need a DJ for your event?</h3>
-            <p className="text-sm text-muted-foreground">Book through our partner SonicWave and get free lighting rental.</p>
+            <h2 className="text-xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+              <span className="h-6 w-1 bg-primary rounded-full"></span>
+              Browse Categories
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Explore our wide range of premium event rentals</p>
           </div>
         </div>
-        <button className="whitespace-nowrap px-4 py-2 bg-foreground text-background font-medium rounded-lg hover:opacity-90 transition-opacity relative z-10">
-          Claim Offer
-        </button>
+
+        <div className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 px-1 scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          {/* "All" Card */}
+          <button
+            onClick={() => {
+              setCategory('all');
+              searchParams.delete('category');
+              setSearchParams(searchParams);
+            }}
+            className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
+              category === 'all'
+                ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10 -translate-y-0.5'
+                : 'bg-card border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5'
+            }`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+              category === 'all'
+                ? 'bg-primary-foreground/15 text-primary-foreground'
+                : 'bg-muted text-muted-foreground'
+            }`}>
+              <LayoutGrid className="w-4.5 h-4.5" />
+            </div>
+            <span className={`font-bold text-sm leading-tight ${
+              category === 'all' ? 'text-primary-foreground' : 'text-foreground'
+            }`}>
+              All Products
+            </span>
+          </button>
+
+          {/* Dynamic Category Cards */}
+          {categories
+            .slice()
+            .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+            .map(cat => {
+              const Icon = getCategoryIcon(cat.name);
+              const isSelected = category === cat.id;
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setCategory(cat.id);
+                    searchParams.set('category', cat.id);
+                    setSearchParams(searchParams);
+                  }}
+                  className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10 -translate-y-0.5'
+                      : 'bg-card border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5'
+                  }`}
+                >
+                  {cat.imageUrl ? (
+                    <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 relative border border-border">
+                      <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all flex-shrink-0 ${
+                      isSelected
+                        ? 'bg-primary-foreground/15 text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      <Icon className="w-4.5 h-4.5" />
+                    </div>
+                  )}
+                  <span className={`font-bold text-sm leading-tight ${
+                    isSelected ? 'text-primary-foreground' : 'text-foreground'
+                  }`}>
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })}
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
