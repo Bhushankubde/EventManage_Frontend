@@ -33,8 +33,21 @@ const CatalogPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setCategory(categoryParam);
-  }, [categoryParam]);
+    if (categories.length > 0 && categoryParam !== 'all') {
+      const found = categories.find(
+        c => c.id === categoryParam || 
+             c.name.toLowerCase().includes(categoryParam.toLowerCase()) ||
+             categoryParam.toLowerCase().includes(c.name.toLowerCase())
+      );
+      if (found) {
+        setCategory(found.id);
+      } else {
+        setCategory(categoryParam);
+      }
+    } else {
+      setCategory(categoryParam);
+    }
+  }, [categoryParam, categories]);
 
   useEffect(() => {
     fetchCategories();
@@ -262,44 +275,44 @@ const CatalogPage = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {displayItems.map(item => (
                 <div key={item.id} className="group glass-panel rounded-xl overflow-hidden flex flex-col hover:border-primary/30 transition-colors">
-                  <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden">
+                  <div className="aspect-[3/2] w-full bg-muted relative overflow-hidden">
                     <LazyLoadImage 
                       src={item.imageUrl || 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80'} 
                       alt={item.name} 
                       effect="blur"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-2 right-2 px-2 py-1 bg-background/90 backdrop-blur text-xs font-bold rounded shadow-sm">
+                    <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-background/90 backdrop-blur text-[10px] font-bold rounded shadow-sm">
                       {item.stock > 0 ? `${item.stock} in stock` : 'Out of Stock'}
                     </div>
                   </div>
                   
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
-                      {item.categoryId || 'General'}
+                  <div className="p-3 flex flex-col flex-1">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">
+                      {categories.find(c => c.id === item.categoryId)?.name || 'General'}
                     </div>
-                    <h3 className="font-bold text-lg leading-tight mb-2 flex-1">{item.name}</h3>
+                    <h3 className="font-semibold text-sm leading-tight mb-1.5 flex-1">{item.name}</h3>
                     
-                    <div className="flex items-end justify-between mt-4">
+                    <div className="flex items-end justify-between mt-2">
                       <div>
-                        <span className="text-2xl font-black">${item.price?.toFixed(2)}</span>
-                        <span className="text-sm text-muted-foreground">/day</span>
+                        <span className="text-base font-black">${item.price?.toFixed(2)}</span>
+                        <span className="text-xs text-muted-foreground">/day</span>
                       </div>
                       
                       <button 
                         disabled={!item.stock || item.stock <= 0}
                         onClick={() => addToCart(item)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
                           item.stock > 0
                             ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
                             : 'bg-muted text-muted-foreground cursor-not-allowed'
                         }`}
                         aria-label="Add to cart"
                       >
-                        <ShoppingCart className="w-4 h-4" />
+                        <ShoppingCart className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
