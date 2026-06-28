@@ -36,7 +36,8 @@ const LoginPage = () => {
       if (storedUser) {
         try {
           const user = JSON.parse(storedUser);
-          isAdmin = user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN';
+          const role = user?.role?.toUpperCase();
+          isAdmin = role === 'ADMIN' || role === 'ROLE_ADMIN';
         } catch (err) {}
       }
 
@@ -51,7 +52,7 @@ const LoginPage = () => {
           navigate('/catalog');
         }
       } else {
-        // If they logged in as an Admin from a normal page, we redirect them to /admin.
+        // If they logged in as an Admin from a normal page, redirect them to /admin.
         if (isAdmin && (from === '/catalog' || from === '/' || from === '/login')) {
           navigate('/admin');
         } else {
