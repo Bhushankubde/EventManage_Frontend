@@ -39,7 +39,7 @@ const AdminDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-in fade-in">
       <SEO title="Admin Dashboard" description="Manage EventDeco rentals and sales." />
-      
+
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
       {error && (
@@ -58,7 +58,7 @@ const AdminDashboard = () => {
             <h3 className="text-2xl font-bold">${displayStats.totalRevenue.toFixed(2)}</h3>
           </div>
         </div>
-        
+
         <div className="glass-panel p-6 rounded-2xl flex items-center">
           <div className="p-3 bg-green-100 text-green-600 rounded-lg mr-4">
             <TrendingUp className="w-6 h-6" />
@@ -68,7 +68,7 @@ const AdminDashboard = () => {
             <h3 className="text-2xl font-bold">{displayStats.totalBookings}</h3>
           </div>
         </div>
-        
+
         <div className="glass-panel p-6 rounded-2xl flex items-center">
           <div className="p-3 bg-purple-100 text-purple-600 rounded-lg mr-4">
             <Package className="w-6 h-6" />
@@ -78,7 +78,7 @@ const AdminDashboard = () => {
             <h3 className="text-2xl font-bold">{displayStats.activeItems}</h3>
           </div>
         </div>
-        
+
         <div className="glass-panel p-6 rounded-2xl flex items-center">
           <div className="p-3 bg-orange-100 text-orange-600 rounded-lg mr-4">
             <Users className="w-6 h-6" />
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
             </a>
           </div>
         </div>
-        
+
         <div className="glass-panel p-6 rounded-2xl">
           <h2 className="text-xl font-bold mb-4">Recent Activity</h2>
           <p className="text-muted-foreground text-sm">Dashboard metrics visualization will be implemented here.</p>
@@ -115,3 +115,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+//more changes in this component
+
