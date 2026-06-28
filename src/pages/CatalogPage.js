@@ -280,7 +280,8 @@ const CatalogPage = () => {
                 <div key={item.id} className="group glass-panel rounded-xl overflow-hidden flex flex-col hover:border-primary/30 transition-colors">
                   <div className="aspect-[3/2] w-full bg-muted relative overflow-hidden">
                     <LazyLoadImage 
-                      src={item.imageUrl || 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80'} 
+                      src={`/images/items/${item.id}.jpg`}
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80' }}
                       alt={item.name} 
                       effect="blur"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
