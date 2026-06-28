@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Lock, Mail } from 'lucide-react';
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(location.state?.error || '');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -28,7 +29,34 @@ const LoginPage = () => {
     setLoading(false);
 
     if (result.success) {
-      navigate('/catalog');
+      // Check the role of the logged in user
+      const storedUser = localStorage.getItem('eventdeco_user');
+      let isAdmin = false;
+      if (storedUser) {
+        try {
+          const user = JSON.parse(storedUser);
+          isAdmin = user?.role === 'ADMIN' || user?.role === 'ROLE_ADMIN';
+        } catch (err) {}
+      }
+
+      const from = location.state?.from?.pathname || '/catalog';
+      
+      // If they were redirected from an admin page, let's make sure they are actually admin.
+      // If not, redirect them to catalog instead of throwing them to homepage or getting stuck.
+      if (from.startsWith('/admin') || from.startsWith('/offline-sales')) {
+        if (isAdmin) {
+          navigate(from);
+        } else {
+          navigate('/catalog');
+        }
+      } else {
+        // If they logged in as an Admin from a normal page, we redirect them to /admin.
+        if (isAdmin && (from === '/catalog' || from === '/' || from === '/login')) {
+          navigate('/admin');
+        } else {
+          navigate(from);
+        }
+      }
     } else {
       setError(result.error || 'Authentication failed');
     }

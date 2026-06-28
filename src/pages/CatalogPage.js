@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Filter, ShoppingCart, Info, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Search, Filter, ShoppingCart, Info, TrendingUp, AlertTriangle, Lightbulb, Layers, Armchair, Sparkles, Volume2, Music, Utensils, Camera, LayoutGrid } from 'lucide-react';
 import { api } from '../services/api';
 import { useCart } from '../context/CartContext';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+
+// Helper to get category icons dynamically based on name
+const getCategoryIcon = (name) => {
+  const n = name.toLowerCase();
+  if (n.includes('light')) return Lightbulb;
+  if (n.includes('stage') || n.includes('truss')) return Layers;
+  if (n.includes('seat') || n.includes('chair') || n.includes('table') || n.includes('sofa')) return Armchair;
+  if (n.includes('decor') || n.includes('prop') || n.includes('flower') || n.includes('fx')) return Sparkles;
+  if (n.includes('sound') || n.includes('audio') || n.includes('speaker')) return Volume2;
+  if (n.includes('dj') || n.includes('music')) return Music;
+  if (n.includes('cater') || n.includes('food') || n.includes('utensil')) return Utensils;
+  if (n.includes('camera') || n.includes('photo') || n.includes('video')) return Camera;
+  return Sparkles; // Default
+};
 
 const CatalogPage = () => {
   const { addToCart } = useCart();
@@ -14,16 +28,46 @@ const CatalogPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState(categoryParam);
   const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setCategory(categoryParam);
-  }, [categoryParam]);
+    if (categories.length > 0 && categoryParam !== 'all') {
+      const found = categories.find(
+        c => c.id === categoryParam || 
+             c.name.toLowerCase().includes(categoryParam.toLowerCase()) ||
+             categoryParam.toLowerCase().includes(c.name.toLowerCase())
+      );
+      if (found) {
+        setCategory(found.id);
+      } else {
+        setCategory(categoryParam);
+      }
+    } else {
+      setCategory(categoryParam);
+    }
+  }, [categoryParam, categories]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     fetchItems();
   }, [category, searchTerm]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await api.getCategories();
+      // Only show active categories
+      const active = (Array.isArray(data) ? data : []).filter(c => c.active !== false);
+      setCategories(active);
+    } catch (err) {
+      // Silent fail — filter will just show no dynamic options
+      setCategories([]);
+    }
+  };
 
   const fetchItems = async () => {
     try {
@@ -43,25 +87,97 @@ const CatalogPage = () => {
     }
   };
 
+  const displayItems = items.filter(
+    item => item.available !== false && item.available !== 0 && item.available !== 'false' && item.available !== '0'
+  );
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
       
-      {/* Top Embedded Ad Banner */}
-      <div className="mb-8 rounded-xl bg-gradient-to-r from-muted to-accent border border-border p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm relative overflow-hidden">
-        <div className="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
-        <div className="flex items-start md:items-center gap-4 relative z-10">
-          <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-            <TrendingUp className="text-blue-600 w-6 h-6" />
-          </div>
+      {/* Premium Horizontal Categories Carousel */}
+      <div className="mb-10 animate-in fade-in duration-700">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Promoted</span>
-            <h3 className="text-lg font-bold text-foreground">Need a DJ for your event?</h3>
-            <p className="text-sm text-muted-foreground">Book through our partner SonicWave and get free lighting rental.</p>
+            <h2 className="text-xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+              <span className="h-6 w-1 bg-primary rounded-full"></span>
+              Browse Categories
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Explore our wide range of premium event rentals</p>
           </div>
         </div>
-        <button className="whitespace-nowrap px-4 py-2 bg-foreground text-background font-medium rounded-lg hover:opacity-90 transition-opacity relative z-10">
-          Claim Offer
-        </button>
+
+        <div className="flex items-center gap-3 overflow-x-auto pb-4 pt-1 px-1 scrollbar-hide -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          {/* "All" Card */}
+          <button
+            onClick={() => {
+              setCategory('all');
+              searchParams.delete('category');
+              setSearchParams(searchParams);
+            }}
+            className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
+              category === 'all'
+                ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10 -translate-y-0.5'
+                : 'bg-card border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5'
+            }`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
+              category === 'all'
+                ? 'bg-primary-foreground/15 text-primary-foreground'
+                : 'bg-muted text-muted-foreground'
+            }`}>
+              <LayoutGrid className="w-4.5 h-4.5" />
+            </div>
+            <span className={`font-bold text-sm leading-tight ${
+              category === 'all' ? 'text-primary-foreground' : 'text-foreground'
+            }`}>
+              All Products
+            </span>
+          </button>
+
+          {/* Dynamic Category Cards */}
+          {categories
+            .slice()
+            .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+            .map(cat => {
+              const Icon = getCategoryIcon(cat.name);
+              const isSelected = category === cat.id;
+
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setCategory(cat.id);
+                    searchParams.set('category', cat.id);
+                    setSearchParams(searchParams);
+                  }}
+                  className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/10 -translate-y-0.5'
+                      : 'bg-card border-border hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5'
+                  }`}
+                >
+                  {cat.imageUrl ? (
+                    <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 relative border border-border">
+                      <img src={cat.imageUrl} alt={cat.name} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all flex-shrink-0 ${
+                      isSelected
+                        ? 'bg-primary-foreground/15 text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      <Icon className="w-4.5 h-4.5" />
+                    </div>
+                  )}
+                  <span className={`font-bold text-sm leading-tight ${
+                    isSelected ? 'text-primary-foreground' : 'text-foreground'
+                  }`}>
+                    {cat.name}
+                  </span>
+                </button>
+              );
+            })}
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -105,10 +221,13 @@ const CatalogPage = () => {
                   }}
                 >
                   <option value="all">All Categories</option>
-                  <option value="staging">Staging & Truss</option>
-                  <option value="lighting">Lighting</option>
-                  <option value="seating">Seating & Tables</option>
-                  <option value="decor">Decor & Props</option>
+                  {categories
+                    .slice()
+                    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+                    .map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
@@ -126,7 +245,7 @@ const CatalogPage = () => {
         <div className="flex-1">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-bold">Equipment Catalog</h1>
-            <span className="text-sm text-muted-foreground">{items.length} items</span>
+            <span className="text-sm text-muted-foreground">{displayItems.length} items</span>
           </div>
  
           {loading ? (
@@ -138,7 +257,7 @@ const CatalogPage = () => {
               <AlertTriangle className="w-5 h-5" />
               <p>{error}</p>
             </div>
-          ) : items.length === 0 ? (
+          ) : displayItems.length === 0 ? (
             <div className="text-center py-20 glass-panel rounded-xl">
               <Info className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-bold">No items found</h3>
@@ -156,44 +275,44 @@ const CatalogPage = () => {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map(item => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {displayItems.map(item => (
                 <div key={item.id} className="group glass-panel rounded-xl overflow-hidden flex flex-col hover:border-primary/30 transition-colors">
-                  <div className="aspect-[4/3] w-full bg-muted relative overflow-hidden">
+                  <div className="aspect-[3/2] w-full bg-muted relative overflow-hidden">
                     <LazyLoadImage 
                       src={item.imageUrl || 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80'} 
                       alt={item.name} 
                       effect="blur"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-2 right-2 px-2 py-1 bg-background/90 backdrop-blur text-xs font-bold rounded shadow-sm">
+                    <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 bg-background/90 backdrop-blur text-[10px] font-bold rounded shadow-sm">
                       {item.stock > 0 ? `${item.stock} in stock` : 'Out of Stock'}
                     </div>
                   </div>
                   
-                  <div className="p-5 flex flex-col flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">
-                      {item.categoryId || 'General'}
+                  <div className="p-3 flex flex-col flex-1">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mb-0.5">
+                      {categories.find(c => c.id === item.categoryId)?.name || 'General'}
                     </div>
-                    <h3 className="font-bold text-lg leading-tight mb-2 flex-1">{item.name}</h3>
+                    <h3 className="font-semibold text-sm leading-tight mb-1.5 flex-1">{item.name}</h3>
                     
-                    <div className="flex items-end justify-between mt-4">
+                    <div className="flex items-end justify-between mt-2">
                       <div>
-                        <span className="text-2xl font-black">${item.price?.toFixed(2)}</span>
-                        <span className="text-sm text-muted-foreground">/day</span>
+                        <span className="text-base font-black">${item.price?.toFixed(2)}</span>
+                        <span className="text-xs text-muted-foreground">/day</span>
                       </div>
                       
                       <button 
                         disabled={!item.stock || item.stock <= 0}
                         onClick={() => addToCart(item)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
                           item.stock > 0
                             ? 'bg-primary text-primary-foreground hover:bg-primary/90' 
                             : 'bg-muted text-muted-foreground cursor-not-allowed'
                         }`}
                         aria-label="Add to cart"
                       >
-                        <ShoppingCart className="w-4 h-4" />
+                        <ShoppingCart className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>

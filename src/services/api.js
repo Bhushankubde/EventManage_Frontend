@@ -95,6 +95,10 @@ export const api = {
       body: JSON.stringify(data),
     }),
     
+  // Categories
+  getCategories: () =>
+    authFetch('/categories'),
+    
   // Items
   getItems: (params) => {
     const query = new URLSearchParams();
