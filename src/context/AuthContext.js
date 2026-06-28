@@ -49,15 +49,7 @@ export function AuthProvider({ children }) {
 
   const register = async (data) => {
     try {
-      const response = await api.register(data);
-      const token = response.token || response.accessToken;
-      localStorage.setItem('eventdeco_token', token);
-      if (response.refreshToken) localStorage.setItem('eventdeco_refresh_token', response.refreshToken);
-      
-      const decoded = parseJwt(token);
-      const userData = { email: decoded.sub, role: decoded.role, firstName: data.firstName || 'User' };
-      localStorage.setItem('eventdeco_user', JSON.stringify(userData));
-      setUser(userData);
+      await api.register(data);
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };

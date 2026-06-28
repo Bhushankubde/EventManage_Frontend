@@ -9,6 +9,7 @@ const LoginPage = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(location.state?.error || '');
+  const [success, setSuccess] = useState(location.state?.message || '');
 
   const [formData, setFormData] = useState({
     email: '',
@@ -83,6 +84,12 @@ const LoginPage = () => {
         {error && (
           <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg text-center font-medium">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="bg-green-500/10 text-green-500 text-sm p-3 rounded-lg text-center font-medium">
+            {success}
           </div>
         )}
 

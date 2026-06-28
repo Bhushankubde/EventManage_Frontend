@@ -31,7 +31,7 @@ const SignupPage = () => {
     setLoading(false);
 
     if (result.success) {
-      navigate('/catalog');
+      navigate('/login', { state: { message: 'Registration successful! Please log in.' } });
     } else {
       setError(result.error || 'Registration failed');
     }
