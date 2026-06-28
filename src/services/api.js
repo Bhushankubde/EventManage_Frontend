@@ -98,6 +98,12 @@ export const api = {
   // Categories
   getCategories: () =>
     authFetch('/categories'),
+  createCategory: (data) =>
+    authFetch('/categories', { method: 'POST', body: JSON.stringify(data) }),
+  updateCategory: (id, data) =>
+    authFetch(`/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteCategory: (id) =>
+    authFetch(`/categories/${id}`, { method: 'DELETE' }),
     
   // Items
   getItems: (params) => {
@@ -107,6 +113,12 @@ export const api = {
     
     return authFetch(`/items?${query.toString()}`);
   },
+  createItem: (data) =>
+    authFetch('/items', { method: 'POST', body: JSON.stringify(data) }),
+  updateItem: (id, data) =>
+    authFetch(`/items/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteItem: (id) =>
+    authFetch(`/items/${id}`, { method: 'DELETE' }),
   
   // Bookings
   getBookings: () =>

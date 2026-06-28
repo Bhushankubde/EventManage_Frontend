@@ -1,6 +1,6 @@
-feat: dynamic floating navbar and link visibility
+feat: Admin Dashboard implementation and Authentication fixes
 
-- Redesigned the Navbar to be a sleek, floating, rounded container (max-width, custom margins, and padding) while preserving logo size.
-- Reshuffled navbar links, moving the Cart button to the left of the authentication block.
-- Implemented dynamic context-aware link visibility: links (e.g., Catalog, Admin, Offline Sales) disappear if they match the user's current route or the originally attempted route before an auth redirect.
-- Ensured Login and Sign Up buttons mutually hide each other when viewing either authentication page.
+- Fixed a bug where admin logins were incorrectly redirected to the catalog due to case-sensitive role checking in the JWT parsing.
+- Implemented InventoryManager and CategoryManager components for the Admin Dashboard to allow for easy inventory management.
+- Integrated the frontend api.js service with endpoints for creating, updating, and deleting categories and items.
+- Fixed a layout issue where the Add New Item modal was overlapped by the Navbar by utilizing a React Portal to render it outside the nested stacking context.
