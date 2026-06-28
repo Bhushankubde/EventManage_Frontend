@@ -1,9 +1,6 @@
-feat: split auth pages and implement route protection
+feat: dynamic floating navbar and link visibility
 
-- Separated unified AuthPage.js into dedicated LoginPage.js and SignupPage.js.
-- Updated App.js to replace /auth route with /login and /signup.
-- Updated Navbar.js to dynamically show Login/Sign Up buttons based on authentication state.
-- Created ProtectedRoute component to guard private routes.
-- Applied ProtectedRoute to AdminDashboard, OfflineSalesPage, CheckoutPage, CartPage, and BookingsPage in App.js.
-- Enforced role-based access for Admin and Offline Sales routes.
-- Removed obsolete AuthPage.js.
+- Redesigned the Navbar to be a sleek, floating, rounded container (max-width, custom margins, and padding) while preserving logo size.
+- Reshuffled navbar links, moving the Cart button to the left of the authentication block.
+- Implemented dynamic context-aware link visibility: links (e.g., Catalog, Admin, Offline Sales) disappear if they match the user's current route or the originally attempted route before an auth redirect.
+- Ensured Login and Sign Up buttons mutually hide each other when viewing either authentication page.
