@@ -53,7 +53,7 @@ export const CatalogSection = () => {
             return (
               <Link
                 key={cat.id}
-                to={`/catalog?category=${cat.id}`}
+                to={`/items?category=${cat.id}`}
                 className={`group flex flex-col p-8 rounded-2xl bg-gradient-to-br ${cat.colorClass} border backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl`}
               >
                 <div className={`w-14 h-14 rounded-xl ${cat.iconBg} border flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>

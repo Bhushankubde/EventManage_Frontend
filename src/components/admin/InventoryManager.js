@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { api } from '../../services/api';
 import { Edit2, Trash2, Plus, X, Image as ImageIcon } from 'lucide-react';
 import { LoadingSpinner } from '../LoadingSpinner';
+import { SafeImage } from '../SafeImage';
 
 export const InventoryManager = () => {
   const [items, setItems] = useState([]);
@@ -150,9 +151,9 @@ export const InventoryManager = () => {
                 <tr key={item.id} className="hover:bg-muted/30 transition-colors">
                   <td className="p-4">
                     <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center overflow-hidden border border-border">
-                      <img 
-                        src={`/images/items/${item.id}.jpg`}
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80' }}
+                      <SafeImage 
+                        src={item.imageUrl}
+                        fallbackSrc="https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80"
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />
@@ -262,6 +263,17 @@ export const InventoryManager = () => {
                       className="w-full px-4 py-2 bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Image URL</label>
+                  <input 
+                    name="imageUrl"
+                    value={formData.imageUrl}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 bg-input-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="e.g., https://images.unsplash.com/... or /images/..."
+                  />
                 </div>
                 
                 <div className="space-y-2">
