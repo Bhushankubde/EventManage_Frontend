@@ -1,7 +1,5 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
-import { useAuth } from './context/AuthContext';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -16,10 +14,9 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const OfflineSalesPage = lazy(() => import('./pages/OfflineSalesPage'));
 const BookingsPage = lazy(() => import('./pages/BookingsPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
+const ItemsPage = lazy(() => import('./pages/ItemsPage'));
 
 const Layout = ({ children }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const { logout, isAuthenticated } = useAuth();
   const location = useLocation();
   const isHomePage = location.pathname === '/';
 
@@ -81,6 +78,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/catalog" element={<CatalogPage />} />
+        <Route path="/items" element={<ItemsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />

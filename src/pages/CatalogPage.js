@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search, Filter, ShoppingCart, Info, TrendingUp, AlertTriangle, Lightbulb, Layers, Armchair, Sparkles, Volume2, Music, Utensils, Camera, LayoutGrid } from 'lucide-react';
 import { api } from '../services/api';
 import { useCart } from '../context/CartContext';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { SafeLazyImage } from '../components/SafeImage';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // Helper to get category icons dynamically based on name
@@ -22,6 +22,7 @@ const getCategoryIcon = (name) => {
 
 const CatalogPage = () => {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || 'all';
   
@@ -110,9 +111,7 @@ const CatalogPage = () => {
           {/* "All" Card */}
           <button
             onClick={() => {
-              setCategory('all');
-              searchParams.delete('category');
-              setSearchParams(searchParams);
+              navigate('/items?category=all');
             }}
             className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
               category === 'all'
@@ -146,9 +145,7 @@ const CatalogPage = () => {
                 <button
                   key={cat.id}
                   onClick={() => {
-                    setCategory(cat.id);
-                    searchParams.set('category', cat.id);
-                    setSearchParams(searchParams);
+                    navigate(`/items?category=${cat.id}`);
                   }}
                   className={`flex items-center gap-3 px-5 py-3 rounded-xl border transition-all duration-300 flex-shrink-0 cursor-pointer ${
                     isSelected
@@ -279,9 +276,9 @@ const CatalogPage = () => {
               {displayItems.map(item => (
                 <div key={item.id} className="group glass-panel rounded-xl overflow-hidden flex flex-col hover:border-primary/30 transition-colors">
                   <div className="aspect-[3/2] w-full bg-muted relative overflow-hidden">
-                    <LazyLoadImage 
-                      src={`/images/items/${item.id}.jpg`}
-                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80' }}
+                    <SafeLazyImage 
+                      src={item.imageUrl}
+                      fallbackSrc="https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80"
                       alt={item.name} 
                       effect="blur"
                       className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
