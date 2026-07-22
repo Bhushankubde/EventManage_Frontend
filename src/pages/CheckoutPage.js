@@ -53,14 +53,14 @@ function PaymentForm({ amount, bookingData, onSuccess }) {
       <div className="p-4 bg-muted border border-border rounded-lg text-sm text-center">
         Stripe Payment Element (Test Mode)
         <br />
-        Amount to charge: ${amount.toFixed(2)}
+        Amount to charge: ₹{amount.toFixed(2)}
       </div>
       <button 
         type="submit" 
         disabled={!stripe || loading}
         className="w-full py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-primary-foreground bg-primary hover:bg-primary/90 transition-all disabled:opacity-50"
       >
-        {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+        {loading ? 'Processing...' : `Pay ₹${amount.toFixed(2)}`}
       </button>
     </form>
   );
@@ -155,15 +155,15 @@ export default function CheckoutPage() {
           <h2 className="text-xl font-bold mb-4">Order Summary</h2>
           <div className="flex justify-between mb-2">
             <span>Subtotal</span>
-            <span>${totalAmount.toFixed(2)}</span>
+            <span>₹{totalAmount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between mb-4 pb-4 border-b border-border">
             <span>Tax</span>
-            <span>${(totalAmount * 0.1).toFixed(2)}</span>
+            <span>₹{(totalAmount * 0.1).toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-bold text-lg mb-6">
             <span>Total</span>
-            <span>${(totalAmount * 1.1).toFixed(2)}</span>
+            <span>₹{(totalAmount * 1.1).toFixed(2)}</span>
           </div>
 
           {showPayment && (

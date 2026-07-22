@@ -120,7 +120,7 @@ const BookingsPage = () => {
                 <div className="pt-4 border-t border-border/50">
                   <div className="flex justify-between items-center font-bold">
                     <span>Total</span>
-                    <span>${booking.totalAmount?.toFixed(2)}</span>
+                    <span>₹{booking.totalAmount?.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

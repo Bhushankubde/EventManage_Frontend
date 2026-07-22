@@ -113,6 +113,8 @@ export const api = {
     
     return authFetch(`/items?${query.toString()}`);
   },
+  getItemById: (id) =>
+    authFetch(`/items/${id}`),
   createItem: (data) =>
     authFetch('/items', { method: 'POST', body: JSON.stringify(data) }),
   updateItem: (id, data) =>

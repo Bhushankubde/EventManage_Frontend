@@ -313,7 +313,7 @@ export default function ItemsPage() {
 
                 {/* Price Range inputs */}
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Price Range ($)</label>
+                  <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Price Range (₹)</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -449,13 +449,16 @@ export default function ItemsPage() {
                       className="group flex flex-col p-5 rounded-2xl bg-gradient-to-br from-[#0d122b]/50 to-[#05060b]/90 border border-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-400/30 hover:shadow-2xl"
                     >
                       {/* Image header */}
-                      <div className="aspect-[3/2] w-full bg-slate-900 rounded-xl overflow-hidden relative border border-white/5 mb-4">
+                      <div 
+                        onClick={() => navigate(`/items/${item.id}`)}
+                        className="aspect-[3/2] w-full bg-slate-900 rounded-xl overflow-hidden relative border border-white/5 mb-4 cursor-pointer"
+                      >
                         <SafeLazyImage 
                           src={item.imageUrl}
                           fallbackSrc="https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=500&q=80"
                           alt={item.name} 
                           effect="blur"
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-in-out"
                         />
                         {/* Stock label */}
                         <div className={`absolute top-2 right-2 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded backdrop-blur border shadow-sm ${
@@ -480,7 +483,10 @@ export default function ItemsPage() {
                           </div>
                         </div>
 
-                        <h3 className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors leading-tight mb-2">
+                        <h3 
+                          onClick={() => navigate(`/items/${item.id}`)}
+                          className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors leading-tight mb-2 cursor-pointer"
+                        >
                           {item.name}
                         </h3>
 
@@ -489,15 +495,18 @@ export default function ItemsPage() {
                         </p>
 
                         <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
-                          <div>
-                            <span className="text-xl font-black text-white">${item.price?.toFixed(2)}</span>
+                          <div onClick={() => navigate(`/items/${item.id}`)} className="cursor-pointer">
+                            <span className="text-xl font-black text-white">₹{item.price?.toFixed(2)}</span>
                             <span className="text-[10px] text-slate-500"> / day</span>
                           </div>
                           
                           <button 
                             disabled={isOutOfStock}
-                            onClick={() => addToCart(item)}
-                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              addToCart(item);
+                            }}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                               isOutOfStock
                                 ? 'bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed'
                                 : 'bg-amber-500 text-black hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/10'

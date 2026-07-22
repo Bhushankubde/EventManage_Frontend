@@ -1,15 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Clock, Lightbulb, Layers, Armchair, Sparkles, ArrowRight, ShoppingCart, User, Phone, Mail } from 'lucide-react';
+import { MapPin, Clock } from 'lucide-react';
 import { CatalogSection } from '../components/CatalogSection';
-
 
 const HomePage = () => {
   return (
     <div className="w-full flex flex-col min-h-screen pb-20 bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white">
       {/* Hero Section */}
-      <section className="relative w-full py-40 text-center overflow-hidden flex items-center justify-center min-h-[550px]">
-        {/* Background Image: Original, no blur color overlay, fully vibrant */}
+      <section className="relative w-full pt-36 pb-20 text-center overflow-hidden flex items-center justify-center min-h-[550px]">
+        {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-all duration-500"
           style={{
@@ -17,30 +16,34 @@ const HomePage = () => {
           }}
         ></div>
 
-        {/* Subtle, premium gradient overlay to blend into the dark page background and ensure white text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#090b16]"></div>
-        <div className="relative z-10 flex flex-col items-center justify-center max-w-5xl mx-auto px-4 w-full">
-
-
-          {/* Tagline badge */}
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-[#090b16]"></div>
+        
+        <div className="relative z-10 flex flex-col items-center justify-center max-w-4xl mx-auto px-4 w-full">
+          {/* Subtitle Badge */}
           <span className="text-amber-400 text-xs md:text-sm font-bold uppercase tracking-widest
                            bg-amber-500/10 px-5 py-1.5 rounded-full border border-amber-500/25
-                           mb-10 backdrop-blur-md shadow-[0_0_18px_rgba(245,158,11,0.12)]">
-            Events, Rentals &amp; Local Shopping Hub
+                           mb-6 backdrop-blur-md shadow-[0_0_18px_rgba(245,158,11,0.12)]">
+            Wedding &middot; Birthday &middot; Corporate
           </span>
 
-          {/* Contact pills */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-10 mb-10 text-base font-medium text-slate-300">
-            <div className="flex items-center gap-2.5 bg-black/25 px-5 py-2 rounded-full border border-white/8 backdrop-blur-sm">
-              <Phone className="w-4 h-4 text-amber-400 flex-shrink-0" />
-              <span>+1 (234) 567-8900</span>
-            </div>
-            <div className="flex items-center gap-2.5 bg-black/25 px-5 py-2 rounded-full border border-white/8 backdrop-blur-sm">
-              <Mail className="w-4 h-4 text-blue-400 flex-shrink-0" />
-              <span>info@eventdeco.com</span>
-            </div>
-          </div>
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
+            Every event, beautifully arranged.
+          </h1>
 
+          {/* Subtext */}
+          <p className="text-slate-200 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed mb-8 drop-shadow">
+            Browse decor, DJ setups, chairs and event supplies &mdash; no login needed until you&apos;re ready to book.
+          </p>
+
+          {/* Browse Categories CTA */}
+          <Link
+            to="/catalog"
+            className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3.5 rounded-full text-lg shadow-lg hover:shadow-amber-500/25 transition-all hover:scale-105"
+          >
+            Browse Categories
+          </Link>
         </div>
       </section>
 
