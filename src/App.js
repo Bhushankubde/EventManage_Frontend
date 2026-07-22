@@ -15,6 +15,7 @@ const OfflineSalesPage = lazy(() => import('./pages/OfflineSalesPage'));
 const BookingsPage = lazy(() => import('./pages/BookingsPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const ItemsPage = lazy(() => import('./pages/ItemsPage'));
+const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -25,7 +26,7 @@ const Layout = ({ children }) => {
       <Navbar />
 
 
-      <main className={`flex-1 relative z-0 ${!isHomePage ? 'pt-32' : ''}`}>
+      <main className={`flex-1 relative z-0 ${!isHomePage ? 'pt-24 sm:pt-28' : ''}`}>
         <Suspense fallback={<LoadingSpinner />}>
           {children}
         </Suspense>
@@ -79,6 +80,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/items" element={<ItemsPage />} />
+        <Route path="/items/:id" element={<ItemDetailPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />

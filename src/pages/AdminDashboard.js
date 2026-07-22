@@ -50,7 +50,7 @@ const AdminDashboard = () => {
           </div>
           <div>
             <p className="text-sm text-muted-foreground font-medium">Total Revenue</p>
-            <h3 className="text-2xl font-bold">${displayStats.totalRevenue.toFixed(2)}</h3>
+            <h3 className="text-2xl font-bold">₹{displayStats.totalRevenue.toFixed(2)}</h3>
           </div>
         </div>
 

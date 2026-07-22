@@ -104,7 +104,7 @@ const OfflineSalesPage = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Deposit Amount ($)</label>
+                <label className="block text-sm font-medium mb-1">Deposit Amount (₹)</label>
                 <input type="number" min="0" step="0.01" name="depositAmount" value={formData.depositAmount} onChange={handleChange} className="w-full p-2 border border-border rounded-md bg-input-background" />
               </div>
             </div>
@@ -128,7 +128,7 @@ const OfflineSalesPage = () => {
                     <p className="text-sm text-muted-foreground">{sale.items?.[0]?.quantity} item(s)</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-green-600">${sale.totalAmount}</p>
+                    <p className="font-bold text-green-600">₹{sale.totalAmount}</p>
                     <p className="text-xs text-muted-foreground">{sale.paymentMethod}</p>
                   </div>
                 </li>

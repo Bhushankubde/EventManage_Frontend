@@ -49,7 +49,7 @@ const CartPage = () => {
               <div className="flex-1 flex flex-col sm:flex-row justify-between w-full">
                 <div>
                   <h3 className="font-bold text-lg">{item.name}</h3>
-                  <p className="text-muted-foreground text-sm">${item.price?.toFixed(2)} / day</p>
+                  <p className="text-muted-foreground text-sm">₹{item.price?.toFixed(2)} / day</p>
                 </div>
                 
                 <div className="flex items-center gap-6 mt-4 sm:mt-0">
@@ -71,7 +71,7 @@ const CartPage = () => {
                   </div>
                   
                   <div className="font-bold w-20 text-right">
-                    ${(item.price * quantity).toFixed(2)}
+                    ₹{(item.price * quantity).toFixed(2)}
                   </div>
                   
                   <button 
@@ -93,17 +93,17 @@ const CartPage = () => {
             <div className="space-y-3 mb-6 pb-6 border-b border-border">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Estimated Tax (10%)</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
             </div>
             
             <div className="flex justify-between font-bold text-xl mb-6">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₹{total.toFixed(2)}</span>
             </div>
             
             <button 
