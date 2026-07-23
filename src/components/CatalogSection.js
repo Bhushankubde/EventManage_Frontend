@@ -209,7 +209,7 @@ export const CatalogSection = () => {
                           disabled={isOutOfStock}
                           onClick={(e) => {
                             e.stopPropagation();
-                            addToCart(item);
+                            navigate(`/items/${item.id}`);
                           }}
                           className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
                             isOutOfStock

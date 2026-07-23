@@ -121,7 +121,7 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-background">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col md:flex-row bg-background pt-24 sm:pt-28">
       <SEO title="Admin Dashboard" description="Manage EventDeco rentals and sales." />
       
       {/* Sidebar Navigation */}

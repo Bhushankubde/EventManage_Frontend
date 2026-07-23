@@ -41,7 +41,7 @@ const BookingsPage = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 animate-in fade-in">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 animate-in fade-in">
       <SEO title="My Bookings" description="View your past and upcoming event equipment bookings." />
       
       <div className="flex justify-between items-center mb-8">

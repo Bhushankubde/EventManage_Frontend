@@ -82,18 +82,7 @@ export default function ItemDetailPage() {
 
   const handleAddToCart = () => {
     if (!item) return;
-    
-    // Store customization details with item
-    const customizedItem = {
-      ...item,
-      selectedPackage: currentPkg.label,
-      eventDate: eventDate || 'Not specified',
-      notes,
-      price: unitPrice
-    };
-
-    addToCart(customizedItem, quantity);
-    toast.success(`${item.name} (${currentPkg.id.toUpperCase()}) added to booking cart!`);
+    addToCart(item, quantity, eventDate, currentPkg.label, notes);
   };
 
   const handleWhatsAppEnquiry = () => {
@@ -139,218 +128,230 @@ export default function ItemDetailPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
-      <SEO title={item.name} description={item.description || 'Event decor rental item.'} />
+    <div className="dark min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-24 sm:pt-28 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <SEO title={item.name} description={item.description || 'Event decor rental item.'} />
 
-      {/* Top Breadcrumb Header */}
-      <div className="flex items-center justify-between mb-6 border-b border-border/40 pb-4">
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
-          <span>/</span>
-          <Link to={`/catalog?category=${item.categoryId || 'all'}`} className="hover:text-foreground transition-colors">
-            {category ? category.name : 'Category'}
-          </Link>
-          <span>/</span>
-          <span className="text-foreground font-semibold truncate max-w-[200px] sm:max-w-none">{item.name}</span>
-        </nav>
-      </div>
-
-      {/* Main Two-Column Layout matching Screenshot */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        
-        {/* LEFT COLUMN: Visual Media & Badges */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="group aspect-[4/3] w-full bg-muted rounded-2xl overflow-hidden relative border border-border shadow-lg cursor-pointer">
-            <SafeLazyImage
-              src={item.imageUrl}
-              fallbackSrc="https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=800&q=80"
-              alt={item.name}
-              effect="blur"
-              className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
-            />
-            {item.stock > 0 && (
-              <div className="absolute top-3 left-3 px-3 py-1 bg-background/95 backdrop-blur text-xs font-bold rounded-lg border border-border shadow-sm flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                {item.stock} Available in Stock
-              </div>
-            )}
-          </div>
-
-          {/* Value Highlights & Inclusions */}
-          <div className="glass-panel p-5 rounded-2xl border border-border/80 space-y-3 bg-muted/20">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-primary" /> What's Included
-            </h4>
-            <ul className="space-y-2 text-xs text-foreground/90">
-              <li className="flex items-center gap-2">
-                <Truck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
-                <span>Professional Setup & Teardown Service Included</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <span>Sanitized & Verified Quality Rental Gear</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <span>Flexible 24-hour Event Rental Period</span>
-              </li>
-            </ul>
-          </div>
+        {/* Top Breadcrumb Header */}
+        <div className="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
+          {/* Breadcrumbs */}
+          <nav className="flex items-center gap-2 text-xs text-slate-400">
+            <Link to="/" className="hover:text-amber-400 transition-colors">Home</Link>
+            <span>/</span>
+            <Link to={`/catalog?category=${item.categoryId || 'all'}`} className="hover:text-amber-400 transition-colors">
+              {category ? category.name : 'Category'}
+            </Link>
+            <span>/</span>
+            <span className="text-white font-semibold truncate max-w-[200px] sm:max-w-none">{item.name}</span>
+          </nav>
         </div>
 
-        {/* RIGHT COLUMN: Item Details & Configuration Form */}
-        <div className="lg:col-span-7 space-y-6">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-serif font-extrabold tracking-tight text-foreground mb-3">
-              {item.name}
-            </h1>
-            
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {item.description || 'Traditional gold & red mandap with floral canopy, drapes and stage lighting. Setup + teardown included.'}
-            </p>
+        {/* Main Two-Column Layout matching Screenshot */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          
+          {/* LEFT COLUMN: Visual Media & Badges */}
+          <div className="lg:col-span-5 space-y-6">
+            <div className="group aspect-[4/3] w-full bg-slate-900 rounded-2xl overflow-hidden relative border border-white/5 shadow-2xl cursor-pointer">
+              <SafeLazyImage
+                src={item.imageUrl}
+                fallbackSrc="https://images.unsplash.com/photo-1508215885820-4585e5610d32?w=800&q=80"
+                alt={item.name}
+                effect="blur"
+                className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+              />
+              {item.stock > 0 && (
+                <div className="absolute top-3 left-3 px-3 py-1 bg-slate-950/80 backdrop-blur text-xs font-bold rounded-lg border border-white/10 shadow-sm flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  {item.stock} Available in Stock
+                </div>
+              )}
+            </div>
+
+            {/* Value Highlights & Inclusions */}
+            <div className="glass-panel p-5 rounded-2xl border border-white/5 bg-[#090b16]/40 backdrop-blur-md space-y-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4 text-amber-400" /> What's Included
+              </h4>
+              <ul className="space-y-2 text-xs text-slate-300">
+                <li className="flex items-center gap-2">
+                  <Truck className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                  <span>Professional Setup & Teardown Service Included</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                  <span>Sanitized & Verified Quality Rental Gear</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                  <span>Flexible 24-hour Event Rental Period</span>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          {/* Pricing starting display */}
-          <div className="border-y border-border/60 py-4 flex items-baseline gap-3">
-            <span className="text-sm font-semibold text-muted-foreground">From</span>
-            <span className="text-3xl font-extrabold text-foreground tracking-tight">
-              ₹{basePrice.toLocaleString()}
-            </span>
-            <span className="text-xs text-muted-foreground">/ day</span>
-          </div>
-
-          {/* Configuration Form */}
-          <div className="space-y-5">
-            {/* Package Selection */}
+          {/* RIGHT COLUMN: Item Details & Configuration Form */}
+          <div className="lg:col-span-7 space-y-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                Package Option
-              </label>
-              <select
-                value={selectedPackage}
-                onChange={(e) => setSelectedPackage(e.target.value)}
-                className="w-full px-4 py-3 bg-input-background border border-border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
-              >
-                {packages.map(pkg => (
-                  <option key={pkg.id} value={pkg.id}>
-                    {pkg.label}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-muted-foreground mt-1.5 font-medium">
-                {currentPkg.description}
+              <h1 className="text-3xl sm:text-4xl font-serif font-extrabold tracking-tight text-white mb-3">
+                {item.name}
+              </h1>
+              
+              <p className="text-sm text-slate-400 leading-relaxed">
+                {item.description || 'Traditional event rental decor. Setup + teardown included.'}
               </p>
             </div>
 
-            {/* Event Date & Quantity Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Event Date */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                  Event Date
-                </label>
-                <div className="relative">
-                  <input
-                    type="date"
-                    min={todayStr}
-                    value={eventDate}
-                    onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-input-background border border-border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer"
-                    placeholder="dd-mm-yyyy"
-                  />
-                </div>
-              </div>
-
-              {/* Quantity Selector */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                  Quantity
-                </label>
-                <div className="flex items-center bg-input-background border border-border rounded-xl px-2 py-1">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                    disabled={quantity <= 1}
-                    className="p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 cursor-pointer"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="flex-1 text-center font-extrabold text-sm text-foreground">
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(prev => (item.stock ? Math.min(item.stock, prev + 1) : prev + 1))}
-                    disabled={item.stock ? quantity >= item.stock : false}
-                    className="p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30 cursor-pointer"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Special Instructions (Optional) */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5">
-                Special Event Requirements / Notes (Optional)
-              </label>
-              <textarea
-                rows="2"
-                placeholder="Mention any custom stage dimensions, venue timings, or preferences..."
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-2 bg-input-background border border-border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
-              ></textarea>
-            </div>
-
-            {/* Dynamic Calculated Total */}
-            <div className="glass-panel p-4 rounded-xl border border-primary/20 bg-primary/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                Total Rental Estimate
+            {/* Pricing starting display */}
+            <div className="border-y border-white/10 py-4 flex items-baseline gap-3">
+              <span className="text-sm font-semibold text-slate-500">From</span>
+              <span className="text-3xl font-extrabold text-white tracking-tight">
+                ₹{basePrice.toLocaleString()}
               </span>
-              <div className="text-right">
-                <span className="text-2xl font-black text-foreground">
-                  ₹{totalPrice.toLocaleString()}
-                </span>
-                <span className="text-[10px] text-muted-foreground block">
-                  ({quantity} unit{quantity > 1 ? 's' : ''} &bull; {currentPkg.id.toUpperCase()})
-                </span>
+              <span className="text-xs text-slate-500">/ day</span>
+            </div>
+
+            {/* Configuration Form */}
+            <div className="space-y-5">
+              {/* Package Selection */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                  Package Option
+                </label>
+                <select
+                  value={selectedPackage}
+                  onChange={(e) => setSelectedPackage(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-900/60 border border-white/10 text-white rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all cursor-pointer"
+                >
+                  {packages.map(pkg => (
+                    <option key={pkg.id} value={pkg.id} className="bg-[#0f1224] text-white">
+                      {pkg.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-slate-500 mt-1.5 font-medium">
+                  {currentPkg.description}
+                </p>
               </div>
+
+              {/* Event Date & Quantity Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Event Date */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    Event Date
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="date"
+                      min={todayStr}
+                      value={eventDate}
+                      onChange={(e) => setEventDate(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-slate-900/60 border border-white/10 text-white rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all cursor-pointer"
+                      placeholder="dd-mm-yyyy"
+                    />
+                  </div>
+                </div>
+
+                {/* Quantity Selector */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                    Quantity
+                  </label>
+                  <div className="flex items-center bg-slate-900/60 border border-white/10 rounded-xl px-2 py-1">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+                      disabled={quantity <= 1}
+                      className="p-2 text-slate-400 hover:text-white transition-colors disabled:opacity-30 cursor-pointer"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="flex-1 text-center font-extrabold text-sm text-white">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(prev => (item.stock ? Math.min(item.stock, prev + 1) : prev + 1))}
+                      disabled={item.stock ? quantity >= item.stock : false}
+                      className="p-2 text-slate-400 hover:text-white transition-colors disabled:opacity-30 cursor-pointer"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Special Instructions (Optional) */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Special Event Requirements / Notes (Optional)
+                </label>
+                <textarea
+                  rows="2"
+                  placeholder="Mention any custom stage dimensions, venue timings, or preferences..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-900/60 border border-white/10 text-white rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all resize-none"
+                ></textarea>
+              </div>
+
+              {/* Dynamic Calculated Total */}
+              <div className="glass-panel p-4 rounded-xl border border-amber-500/20 bg-amber-500/5 flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Total Rental Estimate
+                </span>
+                <div className="text-right">
+                  <span className="text-2xl font-black text-amber-400">
+                    ₹{totalPrice.toLocaleString()}
+                  </span>
+                  <span className="text-[10px] text-slate-500 block">
+                    ({quantity} unit{quantity > 1 ? 's' : ''} &bull; {currentPkg.id.toUpperCase()})
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons matching Screenshot Pill Buttons */}
+              {eventDate && quantity >= 1 ? (
+                <>
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2 animate-in fade-in duration-300">
+                    {/* Primary: Add to Booking Cart */}
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={item.available === false || item.stock <= 0}
+                      className={`flex-1 py-3.5 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer ${
+                        item.available === false || item.stock <= 0
+                          ? 'bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed'
+                          : 'bg-amber-500 text-black hover:bg-amber-400 hover:shadow-lg hover:shadow-amber-500/20 active:scale-95'
+                      }`}
+                    >
+                      <ShoppingBag className="w-4 h-4" /> Add to Booking Cart
+                    </button>
+
+                    {/* Secondary: Enquire on WhatsApp */}
+                    <button
+                      onClick={handleWhatsAppEnquiry}
+                      className="flex-1 py-3.5 px-6 rounded-full font-bold text-sm border-2 border-white/20 text-white hover:bg-white/10 hover:border-white/40 transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                    >
+                      <MessageCircle className="w-4 h-4 text-emerald-400" /> Enquire on WhatsApp
+                    </button>
+                  </div>
+
+                  {/* Subtext matching Screenshot */}
+                  <p className="text-[11px] text-slate-500 text-center sm:text-left leading-normal pt-1 animate-in fade-in duration-300">
+                    Both options are visible here — you don't need to build a full cart to send a quick WhatsApp enquiry.
+                  </p>
+                </>
+              ) : (
+                <div className="p-5 bg-slate-900/40 border border-dashed border-white/10 rounded-2xl text-center text-xs text-slate-500 space-y-1 shadow-inner animate-in fade-in duration-300">
+                  <Calendar className="w-5 h-5 text-amber-500 mx-auto mb-1 opacity-70" />
+                  <p className="font-bold text-white">Awaiting Configuration</p>
+                  <p>Please select an <span className="text-amber-500 font-medium">Event Date</span> to unlock the booking options.</p>
+                </div>
+              )}
             </div>
-
-            {/* Action Buttons matching Screenshot Pill Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              {/* Primary: Add to Booking Cart */}
-              <button
-                onClick={handleAddToCart}
-                disabled={item.available === false || item.stock <= 0}
-                className={`flex-1 py-3.5 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer ${
-                  item.available === false || item.stock <= 0
-                    ? 'bg-muted text-muted-foreground cursor-not-allowed border border-border'
-                    : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-lg active:scale-95'
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" /> Add to Booking Cart
-              </button>
-
-              {/* Secondary: Enquire on WhatsApp */}
-              <button
-                onClick={handleWhatsAppEnquiry}
-                className="flex-1 py-3.5 px-6 rounded-full font-bold text-sm border-2 border-primary text-primary hover:bg-primary/10 transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
-              >
-                <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> Enquire on WhatsApp
-              </button>
-            </div>
-
-            {/* Subtext matching Screenshot */}
-            <p className="text-[11px] text-muted-foreground text-center sm:text-left leading-normal pt-1">
-              Both options are visible here — you don't need to build a full cart to send a quick WhatsApp enquiry.
-            </p>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
   );

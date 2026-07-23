@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, LogOut, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export const Navbar = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { cart } = useCart();
   const navigate = useNavigate();
+  const totalItemsCount = cart ? cart.length : 0;
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearchSubmit = (e) => {
@@ -56,10 +59,15 @@ export const Navbar = () => {
           {/* Cart */}
           <Link
             to="/cart"
-            className="flex items-center justify-center p-2 text-white hover:text-amber-400 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-colors"
+            className="relative flex items-center justify-center p-2 text-white hover:text-amber-400 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-colors"
             title="Cart"
           >
             <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+            {totalItemsCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-amber-400 text-black text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border border-[#070914] shadow-md animate-in zoom-in duration-300">
+                {totalItemsCount}
+              </span>
+            )}
           </Link>
 
           {/* Login / Logout */}

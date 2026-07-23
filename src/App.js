@@ -1,8 +1,9 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Footer } from './components/Footer';
 
 // Lazy load pages for performance optimization
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -18,57 +19,18 @@ const ItemsPage = lazy(() => import('./pages/ItemsPage'));
 const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
 
 const Layout = ({ children }) => {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
       <Navbar />
 
 
-      <main className={`flex-1 relative z-0 ${!isHomePage ? 'pt-24 sm:pt-28' : ''}`}>
+      <main className="flex-1 relative z-0">
         <Suspense fallback={<LoadingSpinner />}>
           {children}
         </Suspense>
       </main>
 
-      <footer className="bg-card border-t border-border mt-auto">
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <span className="font-bold text-2xl tracking-tight flex items-center gap-2 mb-4">
-                <img
-                  src="/images/logo.png"
-                  alt="EventDeco Logo"
-                  className="h-40 w-auto object-contain"
-                />
-              </span>
-              <p className="text-muted-foreground text-sm max-w-xs">
-                Premium event decoration rentals with industrial-grade reliability. From online bookings to walk-in fulfillment.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase mb-4">Support</h3>
-              <ul className="space-y-2">
-                <li><button className="text-sm text-muted-foreground hover:text-primary cursor-pointer text-left w-full">Contact Us</button></li>
-                <li><button className="text-sm text-muted-foreground hover:text-primary cursor-pointer text-left w-full">FAQ</button></li>
-                <li><button className="text-sm text-muted-foreground hover:text-primary cursor-pointer text-left w-full">Return Policy</button></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground tracking-wider uppercase mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><button className="text-sm text-muted-foreground hover:text-primary cursor-pointer text-left w-full">About</button></li>
-                <li><button className="text-sm text-muted-foreground hover:text-primary cursor-pointer text-left w-full">Blog</button></li>
-                <li><Link to="/admin" className="text-sm text-muted-foreground hover:text-primary font-medium">Admin Login</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 border-t border-border pt-8 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">&copy; 2026 EventDeco Inc. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

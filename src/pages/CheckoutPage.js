@@ -73,7 +73,7 @@ export default function CheckoutPage() {
   const [showPayment, setShowPayment] = useState(false);
   const [bookingData, setBookingData] = useState(null);
   
-  const subtotal = cart.reduce((total, { item, quantity }) => total + (item.price * quantity), 0);
+  const subtotal = cart.reduce((total, ci) => total + ((ci.price ?? ci.item.price) * ci.quantity), 0);
   const tax = subtotal * 0.1;
   const totalAmount = subtotal + tax;
 
@@ -96,7 +96,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12 animate-in fade-in">
+    <div className="max-w-3xl mx-auto px-4 pt-24 sm:pt-28 pb-12 animate-in fade-in">
       <SEO title="Checkout" description="Complete your industrial event booking." />
       <Toaster position="top-center" />
       
@@ -174,6 +174,7 @@ export default function CheckoutPage() {
                   amount={totalAmount * 1.1} 
                   bookingData={bookingData}
                   onSuccess={() => {
+                    clearCart();
                     setTimeout(() => navigate('/catalog'), 2000);
                   }}
                 />
