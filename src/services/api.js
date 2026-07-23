@@ -149,4 +149,27 @@ export const api = {
   // Admin
   getDashboardStats: () =>
     authFetch('/admin/stats'),
+
+  // Cart
+  getCart: () =>
+    authFetch('/cart'),
+  addToCart: (data) =>
+    authFetch('/cart', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  updateCartItemQuantity: (id, quantity) =>
+    authFetch(`/cart/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantity }),
+    }),
+  removeCartItem: (id) =>
+    authFetch(`/cart/${id}`, {
+      method: 'DELETE',
+    }),
+  clearCart: () =>
+    authFetch('/cart', {
+      method: 'DELETE',
+    }),
 };
+

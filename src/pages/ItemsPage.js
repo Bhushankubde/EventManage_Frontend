@@ -220,7 +220,7 @@ export default function ItemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-24 sm:pt-28 pb-12 px-4 sm:px-6 lg:px-8">
       <SEO title={categoryName} description={categoryDesc} />
 
       <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
@@ -504,7 +504,7 @@ export default function ItemsPage() {
                             disabled={isOutOfStock}
                             onClick={(e) => {
                               e.stopPropagation();
-                              addToCart(item);
+                              navigate(`/items/${item.id}`);
                             }}
                             className={`px-4 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
                               isOutOfStock

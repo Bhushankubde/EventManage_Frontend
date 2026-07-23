@@ -1,60 +1,88 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { api } from '../services/api'; // Assuming you add checkAvailability to api
+import { api } from '../services/api';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState(() => {
-    const savedCart = localStorage.getItem('eventdeco_cart');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cart, setCart] = useState([]);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.setItem('eventdeco_cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const addToCart = async (item, quantity = 1) => {
-    // Optimistic update
-    setCart(prev => {
-      const existing = prev.find(ci => ci.item.id === item.id);
-      if (existing) {
-        return prev.map(ci => ci.item.id === item.id ? { ...ci, quantity: ci.quantity + quantity } : ci);
-      }
-      return [...prev, { item, quantity }];
-    });
-    
-    toast.success(`${item.name} added to cart`);
-    
-    // Check real-time stock availability
+  const fetchCart = async () => {
+    if (!isAuthenticated) return;
     try {
-      // Assuming api.checkAvailability exists. If not implemented in backend, this would fail gracefully.
-      // const available = await api.checkAvailability(item.id, quantity);
-      // if (!available) {
-      //   removeFromCart(item.id);
-      //   toast.error('Item no longer available in requested quantity');
-      // }
+      const data = await api.getCart();
+      setCart(Array.isArray(data) ? data : []);
     } catch (error) {
-      // Handle check error
-      console.warn("Availability check not implemented in backend yet");
+      console.error("Failed to fetch cart from backend:", error);
     }
   };
 
-  const removeFromCart = (itemId) => {
-    setCart(prev => prev.filter(ci => ci.item.id !== itemId));
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCart();
+    } else {
+      setCart([]);
+    }
+  }, [isAuthenticated]);
+
+  const addToCart = async (item, quantity = 1, eventDate = null, selectedPackage = null, notes = null) => {
+    if (!isAuthenticated) {
+      toast.error('Please log in to add items to your booking cart.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const requestData = {
+        itemId: item.id,
+        quantity,
+        eventDate,
+        selectedPackage,
+        notes
+      };
+      await api.addToCart(requestData);
+      toast.success(`${item.name} added to booking cart!`);
+      await fetchCart();
+    } catch (error) {
+      toast.error(error.message || 'Failed to add item to cart');
+    }
   };
 
-  const updateQuantity = (itemId, newQuantity) => {
+  const removeFromCart = async (cartItemId) => {
+    try {
+      await api.removeCartItem(cartItemId);
+      toast.success('Item removed from cart');
+      await fetchCart();
+    } catch (error) {
+      toast.error(error.message || 'Failed to remove item from cart');
+    }
+  };
+
+  const updateQuantity = async (cartItemId, newQuantity) => {
     if (newQuantity < 1) return;
-    setCart(prev => prev.map(ci => ci.item.id === itemId ? { ...ci, quantity: newQuantity } : ci));
+    try {
+      await api.updateCartItemQuantity(cartItemId, newQuantity);
+      await fetchCart();
+    } catch (error) {
+      toast.error(error.message || 'Failed to update quantity');
+    }
   };
 
-  const clearCart = () => {
-    setCart([]);
+  const clearCart = async () => {
+    try {
+      await api.clearCart();
+      setCart([]);
+    } catch (error) {
+      toast.error(error.message || 'Failed to clear cart');
+    }
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, fetchCart }}>
       {children}
     </CartContext.Provider>
   );
