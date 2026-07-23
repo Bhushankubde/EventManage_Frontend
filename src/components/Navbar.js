@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
 export const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
   const totalItemsCount = cart ? cart.length : 0;
@@ -18,12 +18,15 @@ export const Navbar = () => {
     }
   };
 
+  const isAdmin = user?.role?.toUpperCase() === 'ADMIN' || user?.role?.toUpperCase() === 'ROLE_ADMIN';
+  const logoRedirectPath = isAdmin ? '/admin' : '/';
+
   return (
     <header className="fixed top-0 left-0 right-0 w-full bg-[#070914]/90 backdrop-blur-md border-b border-white/10 z-50 shadow-2xl transition-all">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 lg:px-8 py-2 gap-4">
         {/* Logo */}
-        <Link to="/" className="flex-shrink-0 flex items-center">
-          <img src="/images/logo.png" alt="EventDeco Logo" className="h-12 sm:h-14 w-auto object-contain" />
+        <Link to={logoRedirectPath} className="flex-shrink-0 flex items-center">
+          <img src="/images/logo.png" alt="EventDeco Logo" className="h-16 sm:h-20 lg:h-24 w-auto object-contain transition-all duration-300 hover:scale-[1.03]" />
         </Link>
 
         {/* Navigation Links */}
@@ -79,12 +82,22 @@ export const Navbar = () => {
               Login
             </Link>
           ) : (
-            <button
-              onClick={logout}
-              className="flex items-center text-white hover:text-red-400 border border-white/20 hover:bg-white/10 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4 mr-1.5" /> Logout
-            </button>
+            <div className="flex items-center space-x-2">
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="bg-amber-500 hover:bg-amber-400 text-black px-4.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shadow-md shadow-amber-500/25 mr-2"
+                >
+                  Admin Portal
+                </Link>
+              )}
+              <button
+                onClick={logout}
+                className="flex items-center text-white hover:text-red-400 border border-white/20 hover:bg-white/10 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+              >
+                <LogOut className="w-4 h-4 mr-1.5" /> Logout
+              </button>
+            </div>
           )}
         </div>
       </div>

@@ -131,8 +131,16 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+
+  updateBookingStatus: (id, status) =>
+    authFetch(`/bookings/${id}/status?status=${status}`, {
+      method: 'PUT',
+    }),
     
   // Orders
+  getOrders: () =>
+    authFetch('/orders'),
+
   createOrder: (data) =>
     authFetch('/orders', {
       method: 'POST',
@@ -140,15 +148,135 @@ export const api = {
     }),
 
   // Offline Sales
+  getOfflineSales: () =>
+    authFetch('/offline-sales'),
+
   createOfflineSale: (data) =>
     authFetch('/offline-sales', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
-  // Admin
+  // Walk-in Customers
+  getWalkInCustomers: () =>
+    authFetch('/walk-in-customers'),
+
+  createWalkInCustomer: (data) =>
+    authFetch('/walk-in-customers', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  searchWalkInCustomerByPhone: (phone) =>
+    authFetch(`/walk-in-customers/search?phone=${phone}`),
+
+  // Admin Portal Extensions
   getDashboardStats: () =>
     authFetch('/admin/stats'),
+
+  getAdminUsers: () =>
+    authFetch('/admin/users'),
+
+  updateUserRole: (id, role) =>
+    authFetch(`/admin/users/${id}/role?role=${role}`, {
+      method: 'PUT',
+    }),
+
+  deleteUser: (id) =>
+    authFetch(`/admin/users/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getReviews: () =>
+    authFetch('/admin/reviews'),
+
+  deleteReview: (id) =>
+    authFetch(`/admin/reviews/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getCoupons: () =>
+    authFetch('/admin/coupons'),
+
+  createCoupon: (data) =>
+    authFetch('/admin/coupons', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateCoupon: (id, data) =>
+    authFetch(`/admin/coupons/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteCoupon: (id) =>
+    authFetch(`/admin/coupons/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getVendors: () =>
+    authFetch('/admin/vendors'),
+
+  createVendor: (data) =>
+    authFetch('/admin/vendors', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateVendor: (id, data) =>
+    authFetch(`/admin/vendors/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  deleteVendor: (id) =>
+    authFetch(`/admin/vendors/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getNotifications: () =>
+    authFetch('/admin/notifications'),
+
+  createNotification: (data) =>
+    authFetch('/admin/notifications', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  markNotificationsRead: () =>
+    authFetch('/admin/notifications/mark-read', {
+      method: 'POST',
+    }),
+
+  deleteNotification: (id) =>
+    authFetch(`/admin/notifications/${id}`, {
+      method: 'DELETE',
+    }),
+
+  getCmsContent: () =>
+    authFetch('/admin/cms'),
+
+  saveCmsContent: (data) =>
+    authFetch('/admin/cms', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  getCmsContentByKey: (key) =>
+    authFetch(`/admin/cms/${key}`),
+
+  getActivityLogs: () =>
+    authFetch('/admin/activity-logs'),
+
+  getSystemSettings: () =>
+    authFetch('/admin/settings'),
+
+  saveSystemSetting: (data) =>
+    authFetch('/admin/settings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
 
   // Cart
   getCart: () =>
