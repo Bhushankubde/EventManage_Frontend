@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -19,10 +19,24 @@ const ItemsPage = lazy(() => import('./pages/ItemsPage'));
 const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
 
 const Layout = ({ children }) => {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith('/admin') || location.pathname.startsWith('/offline-sales');
+
+  if (isAdminPath) {
+    return (
+      <div className="min-h-screen bg-[#070914] text-white flex flex-col font-sans">
+        <main className="flex-1 relative z-0">
+          <Suspense fallback={<LoadingSpinner />}>
+            {children}
+          </Suspense>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
       <Navbar />
-
 
       <main className="flex-1 relative z-0">
         <Suspense fallback={<LoadingSpinner />}>
