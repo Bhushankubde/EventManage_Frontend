@@ -147,7 +147,7 @@ const CatalogPage = () => {
   });
 
   return (
-    <div className="dark min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-24 sm:pt-28 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="dark min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Premium Horizontal Categories Carousel */}
         <div className="mb-10 animate-in fade-in duration-700">

@@ -96,7 +96,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-24 sm:pt-28 pb-12 animate-in fade-in">
+    <div className="max-w-3xl mx-auto px-4 pt-28 sm:pt-36 lg:pt-40 pb-12 animate-in fade-in">
       <SEO title="Checkout" description="Complete your industrial event booking." />
       <Toaster position="top-center" />
       

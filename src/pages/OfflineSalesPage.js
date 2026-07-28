@@ -148,7 +148,7 @@ const OfflineSalesPage = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 bg-[#070914] text-white min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 lg:pt-40 pb-12 bg-[#070914] text-white min-h-screen">
       <SEO title="Offline Sales Portal" description="Record walk-in store sales & associate customer profiles." />
       
       <div className="flex justify-between items-center mb-8 border-b border-white/10 pb-4">

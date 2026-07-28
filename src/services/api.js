@@ -82,6 +82,38 @@ async function authFetch(url, options = {}) {
 }
 
 export const api = {
+  // Profile
+  getCurrentUser: () =>
+    authFetch('/users/me'),
+    
+  updateCurrentUser: (data) =>
+    authFetch('/users/me', {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+    
+  uploadAvatar: (formData) => {
+    const token = getAuthToken();
+    return fetch(`${API_BASE_URL}/users/me/avatar`, {
+      method: 'POST',
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: formData,
+    }).then(async (response) => {
+      if (!response.ok) {
+        let errorMsg = 'Failed to upload avatar';
+        try {
+          const error = await response.json();
+          errorMsg = error.message || errorMsg;
+        } catch (e) {}
+        throw new Error(errorMsg);
+      }
+      const json = await response.json();
+      return json.data !== undefined ? json.data : json;
+    });
+  },
+
   // Auth
   login: (email, password) =>
     authFetch('/auth/login', {

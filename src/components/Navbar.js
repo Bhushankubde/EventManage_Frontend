@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, LogOut, Search } from 'lucide-react';
+import { ShoppingCart, Search } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { ProfileDropdown } from './ProfileDropdown';
 
 export const Navbar = () => {
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { cart } = useCart();
   const navigate = useNavigate();
   const totalItemsCount = cart ? cart.length : 0;
@@ -73,7 +74,7 @@ export const Navbar = () => {
             )}
           </Link>
 
-          {/* Login / Logout */}
+          {/* Login / Profile Dropdown */}
           {!isAuthenticated ? (
             <Link
               to="/login"
@@ -82,22 +83,7 @@ export const Navbar = () => {
               Login
             </Link>
           ) : (
-            <div className="flex items-center space-x-2">
-              {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="bg-amber-500 hover:bg-amber-400 text-black px-4.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all shadow-md shadow-amber-500/25 mr-2"
-                >
-                  Admin Portal
-                </Link>
-              )}
-              <button
-                onClick={logout}
-                className="flex items-center text-white hover:text-red-400 border border-white/20 hover:bg-white/10 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors cursor-pointer"
-              >
-                <LogOut className="w-4 h-4 mr-1.5" /> Logout
-              </button>
-            </div>
+            <ProfileDropdown />
           )}
         </div>
       </div>
