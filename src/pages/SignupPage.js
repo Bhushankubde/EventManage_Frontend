@@ -38,7 +38,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center pt-24 sm:pt-28 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[80vh] flex items-center justify-center pt-32 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 glass-panel p-8 rounded-2xl">
         <div>
           <div className="mx-auto h-12 w-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-2xl">

@@ -8,18 +8,34 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('eventdeco_user');
-    const token = localStorage.getItem('eventdeco_token');
-    
-    if (storedUser && token) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        localStorage.removeItem('eventdeco_user');
-        localStorage.removeItem('eventdeco_token');
+    const initAuth = async () => {
+      const storedUser = localStorage.getItem('eventdeco_user');
+      const token = localStorage.getItem('eventdeco_token');
+      
+      if (token) {
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch (e) {}
+        }
+        
+        try {
+          const profile = await api.getCurrentUser();
+          if (profile) {
+            localStorage.setItem('eventdeco_user', JSON.stringify(profile));
+            setUser(profile);
+          }
+        } catch (e) {
+          console.error("Failed to load user profile on startup:", e);
+          if (e.message && (e.message.includes('expired') || e.message.includes('Unauthorized') || e.message.includes('401'))) {
+            logout();
+          }
+        }
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const parseJwt = (token) => {
@@ -38,7 +54,17 @@ export function AuthProvider({ children }) {
       if (response.refreshToken) localStorage.setItem('eventdeco_refresh_token', response.refreshToken);
       
       const decoded = parseJwt(token);
-      const userData = { email: decoded.sub, role: decoded.role, firstName: decoded.firstName || 'User' };
+      let userData = { email: decoded.sub, role: decoded.role, firstName: decoded.firstName || 'User', displayName: decoded.firstName || 'User' };
+      
+      try {
+        const profile = await api.getCurrentUser();
+        if (profile) {
+          userData = profile;
+        }
+      } catch (err) {
+        console.warn("Failed to load full user profile upon login, using JWT fallback:", err);
+      }
+      
       localStorage.setItem('eventdeco_user', JSON.stringify(userData));
       setUser(userData);
       return { success: true };
@@ -68,7 +94,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider value={{ user, setUser, login, register, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
