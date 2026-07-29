@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { api } from '../services/api';
 
 const AuthContext = createContext(null);
@@ -7,7 +7,12 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isInitiatedRef = useRef(false);
+
   useEffect(() => {
+    if (isInitiatedRef.current) return;
+    isInitiatedRef.current = true;
+
     const initAuth = async () => {
       const storedUser = localStorage.getItem('eventdeco_user');
       const token = localStorage.getItem('eventdeco_token');

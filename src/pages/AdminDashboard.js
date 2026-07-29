@@ -1256,7 +1256,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen flex bg-[#070914] text-white">
-      <SEO title="Admin Dashboard Portal" description="Manage Saaj Events rentals and sales ledger." />
+      <SEO title="Admin Dashboard Portal" description="Manage EventDeco rentals and sales ledger." />
 
       {/* Mobile Backdrop Overlay */}
       {isSidebarOpen && (

@@ -36,7 +36,7 @@ const CartPage = () => {
   }
 
   const handleWhatsAppInquiryAll = () => {
-    let message = `Hello Saaj Events! I am interested in inquiring about the following items in my Booking Cart:\n\n`;
+    let message = `Hello EventDeco! I am interested in inquiring about the following items in my Booking Cart:\n\n`;
 
     cart.forEach((ci, idx) => {
       const formattedDate = ci.eventDate ? new Date(ci.eventDate).toLocaleDateString() : 'Not selected';
@@ -227,7 +227,7 @@ const CartPage = () => {
               </div>
 
               <p className="text-[10px] text-slate-500 text-center leading-normal">
-                Availability and final pricing will be verified by Saaj Events coordinators during booking validation.
+                Availability and final pricing will be verified by EventDeco coordinators during booking validation.
               </p>
             </div>
           </div>
