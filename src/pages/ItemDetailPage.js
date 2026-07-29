@@ -89,7 +89,7 @@ export default function ItemDetailPage() {
     if (!item) return;
 
     const formattedDate = eventDate ? new Date(eventDate).toLocaleDateString() : 'Not selected';
-    const message = `Hello Saaj Events! I am interested in inquiring about *${item.name}*.\n\n` +
+    const message = `Hello EventDeco! I am interested in inquiring about *${item.name}*.\n\n` +
       `- *Package:* ${currentPkg.label}\n` +
       `- *Event Date:* ${formattedDate}\n` +
       `- *Quantity:* ${quantity}\n` +

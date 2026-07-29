@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { api } from '../services/api';
@@ -21,10 +21,16 @@ export function CartProvider({ children }) {
     }
   };
 
+  const fetchedRef = useRef(false);
+
   useEffect(() => {
     if (isAuthenticated) {
-      fetchCart();
+      if (!fetchedRef.current) {
+        fetchedRef.current = true;
+        fetchCart();
+      }
     } else {
+      fetchedRef.current = false;
       setCart([]);
     }
   }, [isAuthenticated]);

@@ -180,13 +180,26 @@ export const api = {
     }),
 
   // Offline Sales
-  getOfflineSales: () =>
-    authFetch('/offline-sales'),
+  getOfflineSales: (params) => {
+    const query = new URLSearchParams();
+    if (params?.customerId) query.append('customerId', params.customerId);
+    return authFetch(`/offline-sales?${query.toString()}`);
+  },
 
   createOfflineSale: (data) =>
     authFetch('/offline-sales', {
       method: 'POST',
       body: JSON.stringify(data),
+    }),
+
+  collectOfflineSalePayment: (id, amountPaid) =>
+    authFetch(`/offline-sales/${id}/collect-payment?amountPaid=${amountPaid}`, {
+      method: 'PUT',
+    }),
+
+  returnOfflineSale: (id) =>
+    authFetch(`/offline-sales/${id}/return`, {
+      method: 'PUT',
     }),
 
   // Walk-in Customers
@@ -200,7 +213,7 @@ export const api = {
     }),
 
   searchWalkInCustomerByPhone: (phone) =>
-    authFetch(`/walk-in-customers/search?phone=${phone}`),
+    authFetch(`/walk-in-customers/search?phone=${encodeURIComponent(phone)}`),
 
   // Admin Portal Extensions
   getDashboardStats: () =>
