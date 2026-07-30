@@ -42,9 +42,64 @@ const AdminDashboard = () => {
   const [editItem, setEditItem] = useState(null);
   const [formData, setFormData] = useState({});
 
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
+
   useEffect(() => {
     fetchInitialData();
   }, [activeTab]);
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const notifs = await api.getNotifications();
+        setNotificationsList(notifs || []);
+      } catch (err) {
+        console.error("Failed to load notifications", err);
+      }
+    };
+    loadNotifications();
+
+    const token = localStorage.getItem('eventdeco_token');
+    if (!token) return;
+
+    const socketUrl = `ws://localhost:8080/ws/notifications?token=${token}`;
+    const ws = new WebSocket(socketUrl);
+
+    ws.onopen = () => {
+      console.log("Connected to notification WebSocket server");
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'HANDSHAKE') {
+          console.log("Handshake acknowledged:", data.message);
+          return;
+        }
+
+        setNotificationsList((prev) => [data, ...prev]);
+
+        toast.success(data.message, {
+          description: new Date(data.createdAt || new Date()).toLocaleTimeString(),
+          duration: 6000
+        });
+      } catch (err) {
+        console.error("Failed to parse WebSocket message", err);
+      }
+    };
+
+    ws.onclose = (event) => {
+      console.log("Notification WebSocket disconnected:", event.reason);
+    };
+
+    ws.onerror = (err) => {
+      console.error("WebSocket connection error:", err);
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const fetchInitialData = async () => {
     try {
@@ -162,6 +217,17 @@ const AdminDashboard = () => {
       setNotificationsList(notifs || []);
     } catch (err) {
       toast.error(err.message || 'Failed to update notifications.');
+    }
+  };
+
+  const handleMarkSingleRead = async (id) => {
+    try {
+      await api.markNotificationRead(id);
+      setNotificationsList((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n))
+      );
+    } catch (err) {
+      toast.error(err.message || 'Failed to update notification.');
     }
   };
 
@@ -1026,6 +1092,14 @@ const AdminDashboard = () => {
                   <p className="text-[10px] text-slate-400 mt-0.5">{new Date(n.createdAt).toLocaleString()}</p>
                 </div>
               </div>
+              {!n.readStatus && (
+                <button
+                  onClick={() => handleMarkSingleRead(n.id)}
+                  className="bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-[10px] font-bold px-2.5 py-1 rounded-lg border border-white/5 transition-all"
+                >
+                  Mark as Read
+                </button>
+              )}
             </div>
           ))}
           {notificationsList.length === 0 && (
@@ -1356,12 +1430,83 @@ const AdminDashboard = () => {
 
           <div className="flex items-center space-x-4">
             {/* Direct Home Page Link */}
-            <a
-              href="/"
-              className="hidden sm:inline-flex items-center bg-white/5 border border-white/5 hover:bg-white/10 text-xs font-bold px-3 py-1.5 rounded-lg transition-all text-slate-300 hover:text-white"
-            >
-              Return to Site
-            </a>
+
+
+            {/* Notification Bell */}
+            <div className="relative">
+              <button
+                onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+                className="p-2 text-slate-400 hover:text-white bg-white/5 border border-white/5 rounded-lg transition-all relative"
+                title="Notifications"
+              >
+                <Bell className="w-4.5 h-4.5" />
+                {notificationsList.filter(n => !n.readStatus).length > 0 && (
+                  <span className="absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/3 bg-amber-500 text-black text-[9px] font-bold h-4 w-4 rounded-full flex items-center justify-center border border-[#070914] animate-pulse">
+                    {notificationsList.filter(n => !n.readStatus).length}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown */}
+              {showNotificationDropdown && (
+                <div className="absolute right-0 mt-3 w-80 bg-[#0f1224] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-white/5 flex justify-between items-center bg-white/2">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Alerts & Notifications</h4>
+                    {notificationsList.some(n => !n.readStatus) && (
+                      <button
+                        onClick={handleMarkNotificationsRead}
+                        className="text-[10px] text-amber-400 hover:text-amber-300 font-semibold transition-colors"
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+                  <div className="max-h-72 overflow-y-auto divide-y divide-white/5">
+                    {notificationsList.slice(0, 5).map((n) => (
+                      <div
+                        key={n.id}
+                        onClick={() => {
+                          handleMarkSingleRead(n.id);
+                        }}
+                        className={`p-3.5 flex items-start gap-3 cursor-pointer hover:bg-white/5 transition-colors ${
+                          !n.readStatus ? 'bg-amber-500/5' : ''
+                        }`}
+                      >
+                        <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
+                          !n.readStatus ? 'bg-amber-500 animate-pulse' : 'bg-transparent'
+                        }`} />
+                        <div className="flex-1 min-w-0">
+                          <p className={`text-xs leading-normal break-words ${
+                            !n.readStatus ? 'text-white font-semibold' : 'text-slate-400'
+                          }`}>
+                            {n.message}
+                          </p>
+                          <span className="text-[9px] text-slate-500 mt-1 block">
+                            {new Date(n.createdAt).toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {notificationsList.length === 0 && (
+                      <div className="p-6 text-center text-xs text-slate-500">
+                        No notifications found.
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3 border-t border-white/5 text-center bg-white/2">
+                    <button
+                      onClick={() => {
+                        setActiveTab('notifications');
+                        setShowNotificationDropdown(false);
+                      }}
+                      className="text-xs text-amber-500 hover:text-amber-400 font-bold block w-full"
+                    >
+                      View All Notifications
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Sync button */}
             <button

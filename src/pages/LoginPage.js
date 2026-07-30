@@ -30,35 +30,8 @@ const LoginPage = () => {
     setLoading(false);
 
     if (result.success) {
-      // Check the role of the logged in user
-      const storedUser = localStorage.getItem('eventdeco_user');
-      let isAdmin = false;
-      if (storedUser) {
-        try {
-          const user = JSON.parse(storedUser);
-          const role = user?.role?.toUpperCase();
-          isAdmin = role === 'ADMIN' || role === 'ROLE_ADMIN';
-        } catch (err) {}
-      }
-
       const from = location.state?.from?.pathname || '/catalog';
-      
-      // If they were redirected from an admin page, let's make sure they are actually admin.
-      // If not, redirect them to catalog instead of throwing them to homepage or getting stuck.
-      if (from.startsWith('/admin') || from.startsWith('/offline-sales')) {
-        if (isAdmin) {
-          navigate(from);
-        } else {
-          navigate('/catalog');
-        }
-      } else {
-        // If they logged in as an Admin from a normal page, redirect them to /admin.
-        if (isAdmin && (from === '/catalog' || from === '/' || from === '/login')) {
-          navigate('/admin');
-        } else {
-          navigate(from);
-        }
-      }
+      navigate(from);
     } else {
       setError(result.error || 'Authentication failed');
     }

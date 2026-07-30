@@ -30,6 +30,20 @@ export default function ItemDetailPage() {
     fetchItemDetails();
   }, [id]);
 
+  // Listen to WebSocket inventory updates dynamically
+  useEffect(() => {
+    const handleInventoryUpdate = (e) => {
+      const { itemId, availableQuantity } = e.detail;
+      if (item && item.id === itemId) {
+        setItem(prevItem => ({ ...prevItem, stock: availableQuantity }));
+        setQuantity(prevQty => Math.min(prevQty, availableQuantity > 0 ? availableQuantity : 1));
+      }
+    };
+
+    window.addEventListener('inventory-update', handleInventoryUpdate);
+    return () => window.removeEventListener('inventory-update', handleInventoryUpdate);
+  }, [item]);
+
   const fetchItemDetails = async () => {
     try {
       setLoading(true);

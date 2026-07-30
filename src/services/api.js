@@ -1,12 +1,24 @@
 const API_BASE_URL = 'http://localhost:8080/api';
 
-const getAuthToken = () => localStorage.getItem('eventdeco_token');
+const isAdminPath = () => {
+  const pathname = window.location.pathname;
+  return pathname.startsWith('/admin') || pathname.startsWith('/offline-sales');
+};
+
+const getAuthToken = () => {
+  const key = isAdminPath() ? 'eventdeco_admin_token' : 'eventdeco_user_token';
+  return localStorage.getItem(key);
+};
 
 let isRefreshing = false;
 let refreshPromise = null;
 
 async function refreshToken() {
-  const rt = localStorage.getItem('eventdeco_refresh_token');
+  const isAlt = isAdminPath();
+  const rtKey = isAlt ? 'eventdeco_admin_refresh_token' : 'eventdeco_user_refresh_token';
+  const tKey = isAlt ? 'eventdeco_admin_token' : 'eventdeco_user_token';
+  
+  const rt = localStorage.getItem(rtKey);
   if (!rt) throw new Error('No refresh token available');
   
   const response = await fetch(`${API_BASE_URL}/auth/refreshtoken`, {
@@ -21,7 +33,7 @@ async function refreshToken() {
   const data = json.data !== undefined ? json.data : json;
   
   const newToken = data.accessToken || data.token;
-  localStorage.setItem('eventdeco_token', newToken);
+  localStorage.setItem(tKey, newToken);
   return newToken;
 }
 
@@ -57,10 +69,11 @@ async function authFetch(url, options = {}) {
       });
     } catch (refreshErr) {
       // Refresh failed, user needs to login again
-      localStorage.removeItem('eventdeco_token');
-      localStorage.removeItem('eventdeco_refresh_token');
-      localStorage.removeItem('eventdeco_user');
-      window.location.href = '/auth';
+      const isAlt = isAdminPath();
+      localStorage.removeItem(isAlt ? 'eventdeco_admin_token' : 'eventdeco_user_token');
+      localStorage.removeItem(isAlt ? 'eventdeco_admin_refresh_token' : 'eventdeco_user_refresh_token');
+      localStorage.removeItem(isAlt ? 'eventdeco_admin_user' : 'eventdeco_user');
+      window.location.href = isAlt ? '/admin/login' : '/login';
       throw new Error('Session expired. Please log in again.');
     }
   }
@@ -83,8 +96,14 @@ async function authFetch(url, options = {}) {
 
 export const api = {
   // Profile
-  getCurrentUser: () =>
-    authFetch('/users/me'),
+  getCurrentUser: (customToken) => {
+    if (customToken) {
+      return authFetch('/users/me', {
+        headers: { Authorization: `Bearer ${customToken}` }
+      });
+    }
+    return authFetch('/users/me');
+  },
     
   updateCurrentUser: (data) =>
     authFetch('/users/me', {
@@ -292,6 +311,11 @@ export const api = {
   markNotificationsRead: () =>
     authFetch('/admin/notifications/mark-read', {
       method: 'POST',
+    }),
+
+  markNotificationRead: (id) =>
+    authFetch(`/admin/notifications/${id}/read`, {
+      method: 'PUT',
     }),
 
   deleteNotification: (id) =>

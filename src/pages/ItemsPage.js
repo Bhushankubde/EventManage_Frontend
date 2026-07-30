@@ -54,6 +54,7 @@ export default function ItemsPage() {
   const [categoryDesc, setCategoryDesc] = useState('Explore our premium event rental listings.');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // State keys based on category to keep them isolated
   const sessionStorageKey = `eventdeco_items_state_${categoryId}`;
@@ -163,6 +164,21 @@ export default function ItemsPage() {
     return () => clearTimeout(handler);
   }, [categoryId, searchTerm]);
 
+  // Listen to WebSocket inventory updates dynamically
+  useEffect(() => {
+    const handleInventoryUpdate = (e) => {
+      const { itemId, availableQuantity } = e.detail;
+      setItems(prevItems => 
+        prevItems.map(item => 
+          item.id === itemId ? { ...item, stock: availableQuantity } : item
+        )
+      );
+    };
+
+    window.addEventListener('inventory-update', handleInventoryUpdate);
+    return () => window.removeEventListener('inventory-update', handleInventoryUpdate);
+  }, []);
+
   // Filter & Sort Application locally
   const filteredItems = items
     .filter(item => {
@@ -254,11 +270,22 @@ export default function ItemsPage() {
           </div>
         </div>
 
+        {/* Mobile Filter Toggle Button */}
+        <div className="lg:hidden flex items-center justify-between mb-4 bg-[#0d122b]/40 border border-white/5 p-4 rounded-2xl">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="flex items-center gap-2 text-xs font-bold text-white bg-amber-500 text-black px-4 py-2.5 rounded-xl cursor-pointer"
+          >
+            <SlidersHorizontal className="w-4 h-4" /> {isFilterOpen ? 'Hide Filters' : 'Show Filters'}
+          </button>
+          <span className="text-xs text-slate-400 font-medium">{filteredItems.length} items</span>
+        </div>
+
         {/* Toolbar & Filters Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* Filters Sidebar */}
-          <aside className="space-y-6">
+          <aside className={`space-y-6 ${isFilterOpen ? 'block' : 'hidden lg:block'}`}>
             <div className="glass-panel p-6 rounded-2xl border border-white/10 bg-[#0d122b]/40 backdrop-blur-md">
               <div className="flex items-center justify-between mb-6 pb-2 border-b border-white/5">
                 <h3 className="font-extrabold text-lg flex items-center gap-2">
