@@ -36,6 +36,7 @@ const CatalogPage = () => {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Sync category state with categoryParam from URL, or set default category if none in URL
   useEffect(() => {
@@ -79,6 +80,21 @@ const CatalogPage = () => {
       setError(null);
     }
   }, [category, searchTerm]);
+
+  // Listen to WebSocket inventory updates dynamically
+  useEffect(() => {
+    const handleInventoryUpdate = (e) => {
+      const { itemId, availableQuantity } = e.detail;
+      setItems(prevItems => 
+        prevItems.map(item => 
+          item.id === itemId ? { ...item, stock: availableQuantity } : item
+        )
+      );
+    };
+
+    window.addEventListener('inventory-update', handleInventoryUpdate);
+    return () => window.removeEventListener('inventory-update', handleInventoryUpdate);
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -209,10 +225,21 @@ const CatalogPage = () => {
           )}
         </div>
 
+        {/* Mobile Filter Toggle Button */}
+        <div className="md:hidden flex items-center justify-between mb-4 bg-[#0d122b]/40 border border-white/5 p-4 rounded-2xl">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="flex items-center gap-2 text-xs font-bold text-white bg-amber-500 text-black px-4 py-2.5 rounded-xl cursor-pointer"
+          >
+            <Filter className="w-4 h-4" /> {isFilterOpen ? 'Hide Filters' : 'Show Filters'}
+          </button>
+          <span className="text-xs text-slate-400 font-medium">{displayItems.length} items</span>
+        </div>
+
         <div className="flex flex-col md:flex-row gap-8">
 
           {/* Sidebar Filters */}
-          <aside className="w-full md:w-64 flex-shrink-0 space-y-6">
+          <aside className={`w-full md:w-64 flex-shrink-0 space-y-6 ${isFilterOpen ? 'block' : 'hidden md:block'}`}>
             <div className="glass-panel p-5 rounded-2xl border border-white/5 bg-gradient-to-br from-[#0d122b]/40 to-[#05060b]/95 shadow-xl">
               <h2 className="font-bold text-lg mb-4 flex items-center gap-2 text-white">
                 <Filter className="w-5 h-5" /> Filters

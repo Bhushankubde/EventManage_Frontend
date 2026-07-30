@@ -1,8 +1,8 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { Navbar } from './components/Navbar';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRouteGuard, UserRouteGuard } from './components/ProtectedRoute';
 import { Footer } from './components/Footer';
 
 // Lazy load pages for performance optimization
@@ -17,6 +17,7 @@ const BookingsPage = lazy(() => import('./pages/BookingsPage'));
 const CartPage = lazy(() => import('./pages/CartPage'));
 const ItemsPage = lazy(() => import('./pages/ItemsPage'));
 const ItemDetailPage = lazy(() => import('./pages/ItemDetailPage'));
+const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -50,23 +51,77 @@ const Layout = ({ children }) => {
 };
 
 export default function App() {
+  useEffect(() => {
+    let ws = null;
+    let reconnectTimeout = null;
+
+    const connectWebSocket = () => {
+      const token = localStorage.getItem('eventdeco_user_token') || localStorage.getItem('eventdeco_admin_token') || '';
+      const socketUrl = `ws://localhost:8080/ws/notifications${token ? `?token=${token}` : ''}`;
+      ws = new WebSocket(socketUrl);
+
+      ws.onopen = () => {
+        console.log("Global inventory WebSocket connected");
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'INVENTORY_UPDATE') {
+            console.log("Global WebSocket received inventory update:", data);
+            window.dispatchEvent(new CustomEvent('inventory-update', { detail: data }));
+          }
+        } catch (err) {
+          console.error("Failed to parse WebSocket message", err);
+        }
+      };
+
+      ws.onclose = (event) => {
+        console.log("Global inventory WebSocket closed. Reconnecting in 5s...", event.reason);
+        reconnectTimeout = setTimeout(connectWebSocket, 5000);
+      };
+
+      ws.onerror = (err) => {
+        console.error("Global inventory WebSocket error", err);
+      };
+    };
+
+    connectWebSocket();
+
+    return () => {
+      if (ws) ws.close();
+      if (reconnectTimeout) clearTimeout(reconnectTimeout);
+    };
+  }, []);
+
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/catalog" element={<CatalogPage />} />
-        <Route path="/items" element={<ItemsPage />} />
-        <Route path="/items/:id" element={<ItemDetailPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-        <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-        <Route path="/admin" element={<ProtectedRoute requireAdmin={true}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/offline-sales" element={<ProtectedRoute requireAdmin={true}><OfflineSalesPage /></ProtectedRoute>} />
-        <Route path="/bookings" element={<ProtectedRoute><BookingsPage /></ProtectedRoute>} />
+        {/* User Pages (Public / Guest) */}
+        <Route path="/" element={<UserRouteGuard public={true}><HomePage /></UserRouteGuard>} />
+        <Route path="/catalog" element={<UserRouteGuard public={true}><CatalogPage /></UserRouteGuard>} />
+        <Route path="/items" element={<UserRouteGuard public={true}><ItemsPage /></UserRouteGuard>} />
+        <Route path="/items/:id" element={<UserRouteGuard public={true}><ItemDetailPage /></UserRouteGuard>} />
+        
+        {/* User Sign In / Registration */}
+        <Route path="/login" element={<UserRouteGuard publicOnly={true}><LoginPage /></UserRouteGuard>} />
+        <Route path="/signup" element={<UserRouteGuard publicOnly={true}><SignupPage /></UserRouteGuard>} />
+        
+        {/* User Pages (Protected) */}
+        <Route path="/checkout" element={<UserRouteGuard protected={true}><CheckoutPage /></UserRouteGuard>} />
+        <Route path="/cart" element={<UserRouteGuard protected={true}><CartPage /></UserRouteGuard>} />
+        <Route path="/bookings" element={<UserRouteGuard protected={true}><BookingsPage /></UserRouteGuard>} />
+
+        {/* Admin Portal (Public Login) */}
+        <Route path="/admin/login" element={<AdminRouteGuard publicOnly={true}><AdminLoginPage /></AdminRouteGuard>} />
+        
+        {/* Admin Portal (Protected Console) */}
+        <Route path="/admin" element={<AdminRouteGuard><AdminDashboard /></AdminRouteGuard>} />
+        <Route path="/offline-sales" element={<AdminRouteGuard><OfflineSalesPage /></AdminRouteGuard>} />
+        
+        {/* 404 Route */}
         <Route path="*" element={<div className="p-8 text-center"><h1 className="text-2xl font-bold">404 - Page Not Found</h1></div>} />
       </Routes>
     </Layout>
   );
 }
-

@@ -35,6 +35,26 @@ export function CartProvider({ children }) {
     }
   }, [isAuthenticated]);
 
+  // Listen to WebSocket inventory updates dynamically to sync cart item stocks
+  useEffect(() => {
+    const handleInventoryUpdate = (e) => {
+      const { itemId, availableQuantity } = e.detail;
+      setCart(prevCart => 
+        prevCart.map(ci => {
+          if (ci.item && ci.item.id === itemId) {
+            const updatedItem = { ...ci.item, stock: availableQuantity };
+            const updatedQty = Math.min(ci.quantity, availableQuantity > 0 ? availableQuantity : 1);
+            return { ...ci, item: updatedItem, quantity: updatedQty };
+          }
+          return ci;
+        })
+      );
+    };
+
+    window.addEventListener('inventory-update', handleInventoryUpdate);
+    return () => window.removeEventListener('inventory-update', handleInventoryUpdate);
+  }, []);
+
   const addToCart = async (item, quantity = 1, eventDate = null, selectedPackage = null, notes = null) => {
     if (!isAuthenticated) {
       toast.error('Please log in to add items to your booking cart.');
