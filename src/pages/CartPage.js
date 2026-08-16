@@ -9,12 +9,12 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const subtotal = cart.reduce((total, ci) => total + ((ci.price ?? ci.item.price) * ci.quantity), 0);
-  const tax = subtotal * 0.1; // 10% estimated tax/service charge
-  const total = subtotal + tax;
+  const tax = 0; // Excluded
+  const total = subtotal;
 
   if (cart.length === 0) {
     return (
-      <div className="dark min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="dark flex-1 flex flex-col bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
         <SEO title="My Booking Cart" description="Your event booking cart is currently empty." />
         <div className="max-w-7xl mx-auto py-20 text-center animate-in fade-in duration-500">
           <div className="glass-panel p-12 rounded-2xl inline-block max-w-lg w-full border border-white/10 bg-gradient-to-br from-[#0d122b]/60 to-[#05060b]/90 shadow-2xl">
@@ -56,7 +56,7 @@ const CartPage = () => {
   };
 
   return (
-    <div className="dark min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="dark flex-1 flex flex-col bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <SEO title="My Booking Cart" description="Review items in your event booking cart before checkout." />
 
@@ -198,10 +198,6 @@ const CartPage = () => {
                 <div className="flex justify-between text-slate-400">
                   <span>Items Subtotal</span>
                   <span className="text-white font-bold">₹{subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-slate-400">
-                  <span>Service Fee / Tax (10%)</span>
-                  <span className="text-white font-bold">₹{tax.toLocaleString()}</span>
                 </div>
               </div>
 

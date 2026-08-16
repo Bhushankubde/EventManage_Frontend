@@ -38,7 +38,7 @@ const AdminLoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070914] text-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
+    <div className="flex-1 flex flex-col bg-[#070914] text-white flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
       <SEO title="Admin Gatekeeper Login" description="Restricted Access Administrative login portal." />
 
       {/* Decorative Premium Glow Backdrops */}

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  ArrowUp, 
-  ChevronRight, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  ArrowUp,
+  ChevronRight,
   CheckCircle,
   X,
   Sparkles
@@ -93,10 +93,10 @@ export const Footer = () => {
       <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-blue-500/5 rounded-full filter blur-[140px] pointer-events-none translate-y-1/3"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          
+
           {/* Column 1: Brand details */}
           <div className="space-y-6">
             <Link to="/" className="inline-block transition-transform hover:scale-105 duration-300" onClick={scrollToTop}>
@@ -106,10 +106,10 @@ export const Footer = () => {
                 className="h-20 sm:h-24 lg:h-28 w-auto object-contain brightness-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
               />
             </Link>
-            <p className="text-sm text-slate-400 leading-relaxed max-w-sm">
+            <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
               Crafting unforgettable atmospheres for weddings, corporate galas, and private celebrations. Rent premium, industrial-grade decorations and supplies with absolute reliability.
             </p>
-            
+
             {/* Social Icons */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3 flex items-center gap-1.5">
@@ -131,7 +131,7 @@ export const Footer = () => {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group p-2.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-400 hover:bg-amber-500 hover:text-black transition-all duration-300 hover:-translate-y-1 shadow-md shadow-black/35"
+                      className="group p-2.5 rounded-full bg-white/5 border border-white/10 hover:border-amber-400 hover:bg-amber-500 hover:text-black transition-all duration-300 hover:-translate-y-1 shadow-md shadow-black/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
                       aria-label={social.label}
                     >
                       <IconComponent className="w-4 h-4 transition-transform group-hover:scale-110" />
@@ -160,7 +160,7 @@ export const Footer = () => {
                   <Link
                     to={link.path}
                     onClick={scrollToTop}
-                    className="group flex items-center text-sm text-slate-400 hover:text-amber-400 transition-all duration-200"
+                    className="group flex items-center text-sm text-slate-300 hover:text-amber-400 focus:outline-none focus-visible:text-amber-400 focus-visible:ring-2 focus-visible:ring-amber-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f19] rounded-sm transition-all duration-200"
                   >
                     <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 -ml-4 group-hover:ml-0 mr-1.5 transition-all duration-300 text-amber-400" />
                     <span className="transition-transform group-hover:translate-x-1 duration-200">
@@ -179,44 +179,44 @@ export const Footer = () => {
               Contact Info
             </h3>
             <ul className="space-y-4">
-              <li className="flex items-start gap-3.5 text-sm text-slate-400">
+              <li className="flex items-start gap-3.5 text-sm text-slate-300">
                 <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-amber-400 shrink-0">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div>
                   <strong className="block text-slate-200 text-xs font-semibold">Our Showroom</strong>
-                  <span className="mt-0.5 block">123 Event Street, New York, NY 10001</span>
+                  <span className="mt-0.5 block text-slate-300">123 Event Street, New York, NY 10001</span>
                 </div>
               </li>
-              <li className="flex items-start gap-3.5 text-sm text-slate-400">
+              <li className="flex items-start gap-3.5 text-sm text-slate-300">
                 <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-amber-400 shrink-0">
                   <Phone className="w-4 h-4" />
                 </div>
                 <div>
                   <strong className="block text-slate-200 text-xs font-semibold">Call Support</strong>
-                  <a href="tel:+12125550199" className="hover:text-amber-400 transition-colors mt-0.5 block">
+                  <a href="tel:+12125550199" className="hover:text-amber-400 focus:outline-none focus-visible:text-amber-400 focus-visible:underline transition-colors mt-0.5 block">
                     +1 (212) 555-0199
                   </a>
                 </div>
               </li>
-              <li className="flex items-start gap-3.5 text-sm text-slate-400">
+              <li className="flex items-start gap-3.5 text-sm text-slate-300">
                 <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-amber-400 shrink-0">
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
                   <strong className="block text-slate-200 text-xs font-semibold">Email Us</strong>
-                  <a href="mailto:support@eventdeco.com" className="hover:text-amber-400 transition-colors mt-0.5 block">
+                  <a href="mailto:support@eventdeco.com" className="hover:text-amber-400 focus:outline-none focus-visible:text-amber-400 focus-visible:underline transition-colors mt-0.5 block">
                     support@eventdeco.com
                   </a>
                 </div>
               </li>
-              <li className="flex items-start gap-3.5 text-sm text-slate-400">
+              <li className="flex items-start gap-3.5 text-sm text-slate-300">
                 <div className="p-2 rounded-lg bg-white/5 border border-white/10 text-amber-400 shrink-0">
                   <Clock className="w-4 h-4" />
                 </div>
                 <div>
                   <strong className="block text-slate-200 text-xs font-semibold">Showroom Hours</strong>
-                  <span className="mt-0.5 block">Mon-Sat: 9AM - 7PM | Sun: 10AM - 5PM</span>
+                  <span className="mt-0.5 block text-slate-300">Mon-Sat: 9AM - 7PM | Sun: 10AM - 5PM</span>
                 </div>
               </li>
             </ul>
@@ -228,10 +228,10 @@ export const Footer = () => {
               <span className="absolute left-0 top-0 bottom-0 w-1 bg-amber-400 rounded-full"></span>
               Join Newsletter
             </h3>
-            <p className="text-sm text-slate-400 mb-5 leading-relaxed">
+            <p className="text-sm text-slate-300 mb-5 leading-relaxed">
               Subscribe to stay updated with design trends, new collections, and catalog arrivals.
             </p>
-            
+
             {isSubscribed ? (
               <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm animate-in zoom-in duration-300">
                 <CheckCircle className="w-5 h-5 shrink-0" />
@@ -246,19 +246,19 @@ export const Footer = () => {
                     placeholder="Enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-[#0d122b]/50 border border-white/10 text-white placeholder-slate-400 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all duration-300"
+                    className="w-full bg-[#0d122b]/50 border border-white/20 text-white placeholder-slate-400 focus:placeholder-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/50 transition-all duration-300"
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition-all duration-300 shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] cursor-pointer text-sm tracking-wide"
+                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-extrabold rounded-xl transition-all duration-300 shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 hover:scale-[1.02] cursor-pointer text-sm tracking-wide focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f19]"
                 >
                   Subscribe Now
                 </button>
               </form>
             )}
-            
-            <div className="mt-5 text-slate-500 text-xs">
+
+            <div className="mt-5 text-slate-400 text-xs">
               🔒 We value your privacy. Unsubscribe at any time.
             </div>
           </div>
@@ -267,23 +267,23 @@ export const Footer = () => {
 
         {/* Divider */}
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          
+
           {/* Copyright */}
-          <div className="text-sm text-slate-500 text-center md:text-left">
+          <div className="text-sm text-slate-400 text-center md:text-left">
             &copy; {new Date().getFullYear()} EventDeco Inc. All rights reserved. Made for unforgettable memories.
           </div>
-          
+
           {/* Policy Links */}
           <div className="flex items-center gap-6 text-sm">
             <button
               onClick={() => setShowPrivacy(true)}
-              className="text-slate-500 hover:text-amber-400 transition-colors cursor-pointer"
+              className="text-slate-400 hover:text-amber-400 focus:outline-none focus-visible:text-amber-400 transition-colors cursor-pointer"
             >
               Privacy Policy
             </button>
             <button
               onClick={() => setShowTerms(true)}
-              className="text-slate-500 hover:text-amber-400 transition-colors cursor-pointer"
+              className="text-slate-400 hover:text-amber-400 focus:outline-none focus-visible:text-amber-400 transition-colors cursor-pointer"
             >
               Terms &amp; Conditions
             </button>
@@ -296,7 +296,7 @@ export const Footer = () => {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 p-3 bg-amber-500 text-black rounded-full shadow-2xl transition-all duration-300 hover:bg-amber-400 hover:scale-110 active:scale-95 animate-in fade-in slide-in-from-bottom-5 cursor-pointer border border-amber-600/30"
+          className="fixed bottom-6 right-6 z-50 p-3 bg-amber-500 text-black rounded-full shadow-2xl transition-all duration-300 hover:bg-amber-400 hover:scale-110 active:scale-95 animate-in fade-in slide-in-from-bottom-5 cursor-pointer border border-amber-600/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f19]"
           aria-label="Back to Top"
         >
           <ArrowUp className="w-5 h-5 font-bold" />
@@ -313,7 +313,7 @@ export const Footer = () => {
                 <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
                 Privacy Policy
               </h2>
-              <button 
+              <button
                 onClick={() => setShowPrivacy(false)}
                 className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
               >
@@ -325,19 +325,19 @@ export const Footer = () => {
               <p>Last updated: July 2026</p>
               <h3 className="text-white font-semibold mt-2">1. Information We Collect</h3>
               <p>We collect information you provide directly, such as when you create an account, make booking requests, contact customer service, or subscribe to our newsletter. This includes name, email address, phone number, and rental booking choices.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">2. How We Use Your Information</h3>
               <p>We use your details to process orders, verify checkout security, improve catalog recommendations, handle logistics for dropoff/pickup, and send promo offers (only if you subscribe). We do not sell your personal data to third parties.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">3. Payment Security</h3>
               <p>All online transaction payments are handled via secure, industry-leading processors (such as Stripe). We do not store credit or debit card data on our internal servers.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">4. Cookies</h3>
               <p>We utilize essential functional cookies to persist your active cart state and keep you securely logged in as you browse our rental catalog.</p>
             </div>
             {/* Footer */}
             <div className="p-4 border-t border-white/10 bg-[#070914]/50 flex justify-end">
-              <button 
+              <button
                 onClick={() => setShowPrivacy(false)}
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all cursor-pointer text-sm"
               >
@@ -358,7 +358,7 @@ export const Footer = () => {
                 <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
                 Terms &amp; Conditions
               </h2>
-              <button 
+              <button
                 onClick={() => setShowTerms(false)}
                 className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
               >
@@ -370,19 +370,19 @@ export const Footer = () => {
               <p>Last updated: July 2026</p>
               <h3 className="text-white font-semibold mt-2">1. Booking and Reservations</h3>
               <p>By placing a rental order, you authorize EventDeco Inc. to block inventory items for the scheduled date. Booking requests are pending confirmation until payment terms are fully satisfied.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">2. Security Deposit &amp; Damage</h3>
               <p>Clients are fully liable for decorations, seating, or audio equipment while on rental. Damage, breakage, or loss of items will incur charges up to the full replacement cost of the items.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">3. Rental Duration &amp; Late Returns</h3>
               <p>Standard rentals are calculated on a daily rate. Late returns will be subject to automatic extensions and additional billing matching our standard rate structure.</p>
-              
+
               <h3 className="text-white font-semibold mt-2">4. Cancellation &amp; Refund Policy</h3>
               <p>Cancellations made more than 7 days prior to the event are eligible for a full refund. Cancellations made within 7 days are subject to a 50% reservation hold fee.</p>
             </div>
             {/* Footer */}
             <div className="p-4 border-t border-white/10 bg-[#070914]/50 flex justify-end">
-              <button 
+              <button
                 onClick={() => setShowTerms(false)}
                 className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl transition-all cursor-pointer text-sm"
               >

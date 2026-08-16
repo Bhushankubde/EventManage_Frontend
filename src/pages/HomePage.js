@@ -5,7 +5,7 @@ import { CatalogSection } from '../components/CatalogSection';
 
 const HomePage = () => {
   return (
-    <div className="w-full flex flex-col min-h-screen pb-20 bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white">
+    <div className="w-full flex-1 flex flex-col bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white">
       {/* Hero Section */}
       <section className="relative w-full pt-36 pb-20 text-center overflow-hidden flex items-center justify-center min-h-[550px]">
         {/* Background Image */}

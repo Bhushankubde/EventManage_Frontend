@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X } from 'lucide-react';
+import { ShoppingCart, Search, Menu, X, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { ProfileDropdown } from './ProfileDropdown';
+import { toast } from 'sonner';
+import { api } from '../services/api';
 
 export const Navbar = () => {
   const { isAuthenticated, user } = useAuth();
@@ -12,6 +14,59 @@ export const Navbar = () => {
   const totalItemsCount = cart ? cart.length : 0;
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [hasNewNotif, setHasNewNotif] = useState(false);
+
+  const loadUserNotifications = async () => {
+    if (!isAuthenticated) return;
+    try {
+      const res = await api.getUserNotifications();
+      const notifs = res || [];
+      setNotifications(notifs);
+
+      // seen tracking
+      const seenIds = JSON.parse(localStorage.getItem('eventdeco_seen_notifications') || '[]');
+      const unseen = notifs.filter(n => n.id && !seenIds.includes(n.id));
+      setUnreadCount(unseen.length);
+      setHasNewNotif(unseen.length > 0);
+    } catch (err) {
+      console.error("Failed to load user notifications", err);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadUserNotifications();
+    } else {
+      setNotifications([]);
+      setUnreadCount(0);
+      setHasNewNotif(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const handleNewNotification = (e) => {
+      const notif = e.detail;
+      setNotifications(prev => {
+        const next = [notif, ...prev];
+        const seenIds = JSON.parse(localStorage.getItem('eventdeco_seen_notifications') || '[]');
+        const unseen = next.filter(n => n.id && !seenIds.includes(n.id));
+        setUnreadCount(unseen.length);
+        setHasNewNotif(unseen.length > 0);
+        return next;
+      });
+      
+      toast.success(notif.message, {
+        description: "System Alert",
+        duration: 6000
+      });
+    };
+
+    window.addEventListener('new-notification', handleNewNotification);
+    return () => window.removeEventListener('new-notification', handleNewNotification);
+  }, []);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -76,6 +131,64 @@ export const Navbar = () => {
               </span>
             )}
           </Link>
+
+          {/* Notifications Bell */}
+          {isAuthenticated && (
+            <div className="relative">
+              <button
+                onClick={() => {
+                  const nextShow = !showDropdown;
+                  setShowDropdown(nextShow);
+                  if (nextShow) {
+                    const seenIds = JSON.parse(localStorage.getItem('eventdeco_seen_notifications') || '[]');
+                    const currentIds = notifications.map(n => n.id).filter(Boolean);
+                    const updatedSeenIds = Array.from(new Set([...seenIds, ...currentIds]));
+                    localStorage.setItem('eventdeco_seen_notifications', JSON.stringify(updatedSeenIds));
+                    setUnreadCount(0);
+                    setHasNewNotif(false);
+                  }
+                }}
+                className="relative flex items-center justify-center p-2 text-white hover:text-amber-400 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full transition-colors cursor-pointer"
+                title="Notifications"
+              >
+                <Bell className={`w-4 h-4 sm:w-5 sm:h-5 ${hasNewNotif ? 'animate-pulse text-amber-400' : ''}`} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-black text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center border border-[#070914] shadow-md animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notifications Dropdown */}
+              {showDropdown && (
+                <div className="absolute right-0 mt-3 w-72 sm:w-80 bg-[#0f1224] border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-4 border-b border-white/5 bg-white/2 flex justify-between items-center">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Alerts & Notifications</h4>
+                    <button
+                      onClick={() => { setNotifications([]); setUnreadCount(0); setShowDropdown(false); }}
+                      className="text-[10px] text-slate-400 hover:text-white"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="max-h-64 overflow-y-auto divide-y divide-white/5">
+                    {notifications.length === 0 ? (
+                      <p className="text-xs text-slate-400 text-center py-6">No new notifications.</p>
+                    ) : (
+                      notifications.map((notif, index) => (
+                        <div key={index} className="p-4 hover:bg-white/2 transition-colors">
+                          <p className="text-xs text-slate-200 leading-relaxed font-medium">{notif.message}</p>
+                          <span className="text-[9px] text-slate-500 block mt-1">
+                            {new Date(notif.createdAt || new Date()).toLocaleTimeString()}
+                          </span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Login / Profile Dropdown */}
           {!isAuthenticated ? (

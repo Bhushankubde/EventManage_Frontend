@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
   if (isAdminPath) {
     return (
       <div className="min-h-screen bg-[#070914] text-white flex flex-col font-sans">
-        <main className="flex-1 relative z-0">
+        <main className="flex-1 flex flex-col relative z-0">
           <Suspense fallback={<LoadingSpinner />}>
             {children}
           </Suspense>
@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900">
       <Navbar />
 
-      <main className="flex-1 relative z-0">
+      <main className="flex-1 flex flex-col relative z-0">
         <Suspense fallback={<LoadingSpinner />}>
           {children}
         </Suspense>
@@ -70,6 +70,9 @@ export default function App() {
           if (data.type === 'INVENTORY_UPDATE') {
             console.log("Global WebSocket received inventory update:", data);
             window.dispatchEvent(new CustomEvent('inventory-update', { detail: data }));
+          } else if (data.type !== 'HANDSHAKE' && data.message) {
+            console.log("Global WebSocket received notification:", data);
+            window.dispatchEvent(new CustomEvent('new-notification', { detail: data }));
           }
         } catch (err) {
           console.error("Failed to parse WebSocket message", err);
