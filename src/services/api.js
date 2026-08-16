@@ -302,6 +302,9 @@ export const api = {
   getNotifications: () =>
     authFetch('/admin/notifications'),
 
+  getUserNotifications: () =>
+    authFetch('/users/notifications'),
+
   createNotification: (data) =>
     authFetch('/admin/notifications', {
       method: 'POST',

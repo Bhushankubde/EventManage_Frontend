@@ -9,7 +9,8 @@ import {
   Users, DollarSign, Package, TrendingUp, Calendar, Box, Tag,
   LayoutDashboard, ShoppingBag, Bell, FileText, Settings, Shield,
   Activity, Percent, Star, Menu, X, ChevronRight, Plus, Edit2,
-  Trash2, RefreshCw, Check, AlertTriangle, Eye, CreditCard, Info, Truck
+  Trash2, RefreshCw, Check, AlertTriangle, Eye, CreditCard, Info, Truck,
+  Phone, MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -41,6 +42,8 @@ const AdminDashboard = () => {
   const [modalType, setModalType] = useState(''); // 'vendor', 'coupon', 'cms', 'setting'
   const [editItem, setEditItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false);
 
@@ -59,7 +62,7 @@ const AdminDashboard = () => {
     };
     loadNotifications();
 
-    const token = localStorage.getItem('eventdeco_token');
+    const token = localStorage.getItem('eventdeco_admin_token');
     if (!token) return;
 
     const socketUrl = `ws://localhost:8080/ws/notifications?token=${token}`;
@@ -74,6 +77,10 @@ const AdminDashboard = () => {
         const data = JSON.parse(event.data);
         if (data.type === 'HANDSHAKE') {
           console.log("Handshake acknowledged:", data.message);
+          return;
+        }
+        if (data.type === 'INVENTORY_UPDATE') {
+          console.log("Inventory update ignored in admin notification console:", data);
           return;
         }
 
@@ -649,7 +656,7 @@ const AdminDashboard = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white/5 text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-white/5">
-                <th className="p-4">Booking ID</th>
+                <th className="p-4">Booking Number / ID</th>
                 <th className="p-4">Customer Details</th>
                 <th className="p-4">Event Details</th>
                 <th className="p-4">Amount</th>
@@ -660,10 +667,11 @@ const AdminDashboard = () => {
             <tbody className="divide-y divide-white/5 text-sm">
               {bookingsList.map(b => (
                 <tr key={b.id} className="hover:bg-white/2 transition-colors">
-                  <td className="p-4 font-bold text-amber-500">#{b.id.substring(0, 8)}</td>
-                  <td className="p-4">
-                    <p className="font-semibold text-white">{b.user?.firstName || 'Customer'} {b.user?.lastName || ''}</p>
-                    <p className="text-xs text-slate-400">{b.user?.email || 'N/A'}</p>
+                  <td className="p-4 font-bold text-amber-500">{b.bookingNumber || `#${b.id.substring(0, 8)}`}</td>
+                  <td className="p-4 text-xs">
+                    <p className="font-semibold text-white text-sm">{b.fullName || `${b.user?.firstName || 'Guest'} ${b.user?.lastName || ''}`.trim()}</p>
+                    <p className="text-slate-400 mt-0.5">WhatsApp: <strong className="text-emerald-400">{b.whatsAppNumber || b.user?.phone || 'N/A'}</strong></p>
+                    {b.email && <p className="text-slate-500">{b.email}</p>}
                   </td>
                   <td className="p-4">
                     <p className="text-white font-medium">{new Date(b.eventDate).toLocaleDateString()} @ {b.eventTime}</p>
@@ -671,38 +679,67 @@ const AdminDashboard = () => {
                   </td>
                   <td className="p-4 font-bold text-white">₹{b.totalAmount}</td>
                   <td className="p-4">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${b.status === 'CONFIRMED' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                        b.status === 'COMPLETED' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                          b.status === 'CANCELLED' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
-                            'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                      }`}>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                      b.status === 'PENDING' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' :
+                      b.status === 'APPROVED' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                      b.status === 'REJECTED' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                      'bg-slate-500/10 text-slate-400 border-white/5'
+                    }`}>
                       {b.status}
                     </span>
                   </td>
-                  <td className="p-4 text-right space-x-1">
+                  <td className="p-4 text-right space-x-1.5 whitespace-nowrap">
+                    {/* View Details */}
+                    <button
+                      onClick={() => { setSelectedBooking(b); setIsBookingModalOpen(true); }}
+                      className="p-2 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-lg border border-white/5 transition-all inline-flex items-center justify-center"
+                      title="View Booking Details"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </button>
+
+                    {/* Open WhatsApp */}
+                    {(b.whatsAppNumber || b.user?.phone) && (
+                      <a
+                        href={`https://wa.me/${(b.whatsAppNumber || b.user?.phone).replace(/\+/g, '').replace(/[-\s]/g, '').trim()}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg border border-emerald-500/20 transition-all inline-flex items-center justify-center"
+                        title="Chat on WhatsApp"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 fill-emerald-400/10" />
+                      </a>
+                    )}
+
+                    {/* Call Customer */}
+                    {(b.whatsAppNumber || b.user?.phone) && (
+                      <a
+                        href={`tel:${b.whatsAppNumber || b.user?.phone}`}
+                        className="p-2 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white rounded-lg border border-white/5 transition-all inline-flex items-center justify-center"
+                        title="Call Customer"
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+
+                    {/* Quick Approve/Reject buttons if Pending */}
                     {b.status === 'PENDING' && (
-                      <button
-                        onClick={() => handleBookingStatusChange(b.id, 'CONFIRMED')}
-                        className="bg-emerald-500 hover:bg-emerald-400 text-black font-bold text-xs px-2.5 py-1 rounded-lg transition-all"
-                      >
-                        Confirm
-                      </button>
-                    )}
-                    {b.status === 'CONFIRMED' && (
-                      <button
-                        onClick={() => handleBookingStatusChange(b.id, 'COMPLETED')}
-                        className="bg-blue-500 hover:bg-blue-400 text-white font-bold text-xs px-2.5 py-1 rounded-lg transition-all"
-                      >
-                        Complete
-                      </button>
-                    )}
-                    {b.status !== 'CANCELLED' && b.status !== 'COMPLETED' && (
-                      <button
-                        onClick={() => handleBookingStatusChange(b.id, 'CANCELLED')}
-                        className="bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold text-xs px-2.5 py-1 rounded-lg border border-red-500/20 transition-all"
-                      >
-                        Cancel
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleBookingStatusChange(b.id, 'APPROVED')}
+                          className="px-2.5 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold text-[10px] rounded-lg transition-all uppercase tracking-wider inline-flex items-center"
+                          title="Approve Booking"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleBookingStatusChange(b.id, 'REJECTED')}
+                          className="px-2.5 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 font-bold text-[10px] rounded-lg transition-all uppercase tracking-wider inline-flex items-center"
+                          title="Reject Booking"
+                        >
+                          Reject
+                        </button>
+                      </>
                     )}
                   </td>
                 </tr>
@@ -1329,7 +1366,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#070914] text-white">
+    <div className="flex-1 flex bg-[#070914] text-white">
       <SEO title="Admin Dashboard Portal" description="Manage EventDeco rentals and sales ledger." />
 
       {/* Mobile Backdrop Overlay */}
@@ -1482,7 +1519,7 @@ const AdminDashboard = () => {
                             {n.message}
                           </p>
                           <span className="text-[9px] text-slate-500 mt-1 block">
-                            {new Date(n.createdAt).toLocaleString()}
+                            {new Date(n.createdAt || new Date()).toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -1793,6 +1830,145 @@ const AdminDashboard = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ==========================================
+          BOOKING DETAILS MODAL POPUP DIALOG
+          ========================================== */}
+      {isBookingModalOpen && selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#0f1224] border border-white/10 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex justify-between items-center p-6 border-b border-white/5 bg-white/2">
+              <div>
+                <h3 className="text-lg font-black text-white">
+                  {selectedBooking.bookingNumber || `Booking #${selectedBooking.id.substring(0, 8)}`}
+                </h3>
+                <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                  Placed on {new Date(selectedBooking.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <button 
+                onClick={() => { setIsBookingModalOpen(false); setSelectedBooking(null); }} 
+                className="text-slate-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6 overflow-y-auto max-h-[65vh]">
+              {/* Customer Info Card */}
+              <div className="bg-white/2 border border-white/5 p-4 rounded-xl space-y-3.5">
+                <h4 className="text-xs font-bold text-amber-500 uppercase tracking-wider">Client & Delivery Info</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-slate-300">
+                  <div>
+                    <span className="text-slate-400 block mb-1">Full Name</span>
+                    <strong className="text-white text-sm">{selectedBooking.fullName || 'Guest Client'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block mb-1">WhatsApp Contact</span>
+                    <strong className="text-white text-sm block">{selectedBooking.whatsAppNumber || 'N/A'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block mb-1">Email Address</span>
+                    <strong className="text-white text-sm">{selectedBooking.email || selectedBooking.user?.email || 'N/A'}</strong>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block mb-1">Event Date & Delivery Time</span>
+                    <strong className="text-white text-sm block">
+                      {new Date(selectedBooking.eventDate).toLocaleDateString()} @ {selectedBooking.eventTime}
+                    </strong>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <span className="text-slate-400 block mb-1">Event Location / Address</span>
+                    <strong className="text-white text-sm block leading-relaxed">{selectedBooking.eventLocation}</strong>
+                  </div>
+                  {selectedBooking.additionalNotes && (
+                    <div className="sm:col-span-2">
+                      <span className="text-slate-400 block mb-1">Additional Notes</span>
+                      <p className="bg-[#070914] p-3 rounded-lg border border-white/5 text-slate-300 italic whitespace-pre-line leading-relaxed">
+                        {selectedBooking.additionalNotes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Items List */}
+              <div className="space-y-3.5">
+                <h4 className="text-xs font-bold text-amber-500 uppercase tracking-wider">Requested Rental Items</h4>
+                <div className="space-y-2.5">
+                  {selectedBooking.items?.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center text-xs bg-white/2 p-3 rounded-xl border border-white/5">
+                      <div>
+                        <p className="font-bold text-white text-sm">{item.item?.name || 'Rental Item'}</p>
+                        <p className="text-slate-400 mt-0.5">Price: ₹{item.price ?? item.item?.price} per unit</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="font-black text-white text-sm">× {item.quantity}</p>
+                        <p className="text-amber-500 font-bold mt-0.5">₹{((item.price ?? item.item?.price) * item.quantity).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Status Transition Selector */}
+              <div className="bg-white/2 border border-white/5 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Update Booking Status</span>
+                  <span className="text-[10px] text-slate-500 mt-1 block">Transition booking to a different state</span>
+                </div>
+                <select
+                  value={selectedBooking.status}
+                  onChange={async (e) => {
+                    const nextStatus = e.target.value;
+                    try {
+                      await handleBookingStatusChange(selectedBooking.id, nextStatus);
+                      setSelectedBooking({ ...selectedBooking, status: nextStatus });
+                      // Fetch updated booking list to refresh main UI
+                      const data = await api.getBookings();
+                      setBookingsList(data || []);
+                    } catch (err) {}
+                  }}
+                  className="bg-[#070914] border border-white/10 text-white rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-amber-500 focus:outline-none w-full sm:w-48 font-bold"
+                >
+                  <option value="PENDING">Pending Confirmation</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-white/5 flex flex-wrap gap-3 bg-white/2 rounded-b-2xl justify-between items-center">
+              <div className="text-left shrink-0">
+                <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">Estimated Total</span>
+                <span className="text-base font-black text-amber-500">₹{selectedBooking.totalAmount?.toFixed(2)}</span>
+              </div>
+              <div className="flex space-x-2">
+                {(selectedBooking.whatsAppNumber || selectedBooking.user?.phone) && (
+                  <>
+                    <a 
+                      href={`tel:${selectedBooking.whatsAppNumber || selectedBooking.user?.phone}`}
+                      className="flex items-center px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-xl text-xs font-bold transition-all"
+                    >
+                      <Phone className="w-4 h-4 mr-1.5" />
+                      Call Customer
+                    </a>
+                    <a 
+                      href={`https://wa.me/${(selectedBooking.whatsAppNumber || selectedBooking.user?.phone).replace(/\+/g, '').replace(/[-\s]/g, '').trim()}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black rounded-xl text-xs font-extrabold transition-all shadow-md shadow-emerald-500/10"
+                    >
+                      <MessageCircle className="w-4 h-4 mr-1.5 fill-black" />
+                      WhatsApp
+                    </a>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

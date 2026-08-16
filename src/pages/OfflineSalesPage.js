@@ -408,7 +408,7 @@ const OfflineSalesPage = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 lg:pt-40 pb-12 bg-[#070914] text-white min-h-screen">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 lg:pt-40 pb-12 bg-[#070914] text-white flex-1 flex flex-col">
       <SEO title="Walk-in POS Cashier & Registry" description="Manage walk-in store cashier desk, customer registries, rental invoices, return restocking, and pending payments." />
       
       {error && (

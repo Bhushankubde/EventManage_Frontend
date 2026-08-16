@@ -236,7 +236,7 @@ export default function ItemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex-1 flex flex-col bg-gradient-to-b from-[#090b16] via-[#0d1430] to-[#05060b] text-white pt-28 sm:pt-36 lg:pt-40 pb-12 px-4 sm:px-6 lg:px-8">
       <SEO title={categoryName} description={categoryDesc} />
 
       <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">

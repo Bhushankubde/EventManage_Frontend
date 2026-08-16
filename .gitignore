@@ -65,3 +65,7 @@ yarn-error.log*
 # -------------------------------------------------
 public/images/items/
 download-images.mjs
+
+# Local commit notes
+commit.txt
+

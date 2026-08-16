@@ -75,7 +75,7 @@ export const CatalogSection = () => {
   };
 
   return (
-    <section className="w-full py-12 sm:py-16 px-4 sm:px-6 lg:px-8 relative z-10 bg-gradient-to-b from-[#0a0c1f] via-[#151726] to-[#090b16]">
+    <section className="w-full pt-12 sm:pt-16 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8 relative z-10 bg-gradient-to-b from-[#0a0c1f] via-[#151726] to-[#090b16]">
       <div className="max-w-[1600px] mx-auto w-full space-y-14 sm:space-y-16">
 
         {/* SECTION 1: BROWSE BY CATEGORIES */}
